@@ -7,6 +7,7 @@ from domainhunter.exporters.excel_exporter import export_results_to_excel
 from domainhunter.exporters.structured_exporter import (
     export_results_to_csv,
     export_results_to_json,
+    export_results_to_markdown,
 )
 from domainhunter.io import read_candidate_domains
 from domainhunter.scrapers.factory import create_scraper, resolve_providers
@@ -30,6 +31,7 @@ async def _run_check_async(
     evidence_dir: Path | None,
     json_output: Path | None,
     csv_dir: Path | None,
+    report_output: Path | None,
 ) -> int:
     settings = DomainHunterSettings.from_env()
     resolved_timeout_ms = timeout_ms if timeout_ms is not None else settings.timeout_ms
@@ -52,6 +54,8 @@ async def _run_check_async(
         print(f"Salida JSON: {json_output}")
     if csv_dir is not None:
         print(f"Salida CSV: {csv_dir}")
+    if report_output is not None:
+        print(f"Reporte Markdown: {report_output}")
     print(f"Evidencia: {resolved_evidence_dir}")
     print(f"Dominios cargados: {len(domains)}")
 
@@ -80,12 +84,16 @@ async def _run_check_async(
         export_results_to_json(results, json_output)
     if csv_dir is not None:
         export_results_to_csv(results, csv_dir)
+    if report_output is not None:
+        export_results_to_markdown(results, report_output)
 
     print(f"Resultados exportados: {output}")
     if json_output is not None:
         print(f"JSON exportado: {json_output}")
     if csv_dir is not None:
         print(f"CSV exportado: {csv_dir}")
+    if report_output is not None:
+        print(f"Reporte exportado: {report_output}")
     return 0
 
 
@@ -101,6 +109,7 @@ def _run_check(
     evidence_dir: Path | None,
     json_output: Path | None,
     csv_dir: Path | None,
+    report_output: Path | None,
 ) -> int:
     return asyncio.run(
         _run_check_async(
@@ -115,6 +124,7 @@ def _run_check(
             evidence_dir=evidence_dir,
             json_output=json_output,
             csv_dir=csv_dir,
+            report_output=report_output,
         )
     )
 
@@ -179,6 +189,10 @@ if typer is not None:
             Path | None,
             typer.Option("--csv-dir", help="Directorio CSV opcional."),
         ] = None,
+        report_output: Annotated[
+            Path | None,
+            typer.Option("--report-output", help="Reporte Markdown opcional."),
+        ] = None,
     ) -> None:
         """Consulta dominios y exporta resultados normalizados."""
         exit_code = _run_check(
@@ -193,6 +207,7 @@ if typer is not None:
             evidence_dir=evidence_dir,
             json_output=json_output,
             csv_dir=csv_dir,
+            report_output=report_output,
         )
         if exit_code:
             raise typer.Exit(code=exit_code)
@@ -229,6 +244,7 @@ else:
         check_parser.add_argument("--evidence-dir", type=Path, default=None)
         check_parser.add_argument("--json-output", type=Path, default=None)
         check_parser.add_argument("--csv-dir", type=Path, default=None)
+        check_parser.add_argument("--report-output", type=Path, default=None)
 
         args = parser.parse_args()
         if args.command == "check":
@@ -245,6 +261,7 @@ else:
                     evidence_dir=args.evidence_dir,
                     json_output=args.json_output,
                     csv_dir=args.csv_dir,
+                    report_output=args.report_output,
                 )
             )
 

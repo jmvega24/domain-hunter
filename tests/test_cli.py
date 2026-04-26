@@ -41,6 +41,8 @@ def test_check_command_reports_optional_structured_outputs_in_dry_run_mode(tmp_p
             str(tmp_path / "results.json"),
             "--csv-dir",
             str(tmp_path / "csv"),
+            "--report-output",
+            str(tmp_path / "report.md"),
             "--dry-run",
         ],
     )
@@ -48,3 +50,4 @@ def test_check_command_reports_optional_structured_outputs_in_dry_run_mode(tmp_p
     assert result.exit_code == 0
     assert "Salida JSON:" in result.output
     assert "Salida CSV:" in result.output
+    assert "Reporte Markdown:" in result.output

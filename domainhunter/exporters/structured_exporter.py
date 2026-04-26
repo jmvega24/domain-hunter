@@ -58,8 +58,52 @@ def export_results_to_csv(results: list[DomainCheckResult], output_dir: Path) ->
     _write_csv(output_dir / "shortlist.csv", payload["shortlist"], SUMMARY_COLUMNS)
 
 
+def export_results_to_markdown(results: list[DomainCheckResult], output_path: Path) -> None:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = build_export_payload(results)
+    output_path.write_text(_render_markdown_report(payload), encoding="utf-8")
+
+
 def _write_csv(path: Path, rows: list[dict[str, Any]], columns: list[str]) -> None:
     with path.open("w", encoding="utf-8", newline="") as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=columns, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
+
+
+def _render_markdown_report(payload: dict[str, list[dict[str, Any]]]) -> str:
+    lines = [
+        "# DomainHunter Report",
+        "",
+        "Este reporte ayuda a revisar candidatos; no confirma disponibilidad legal ni registral.",
+        "",
+        "## Shortlist",
+        "",
+    ]
+    lines.extend(_render_table(payload["shortlist"], SUMMARY_COLUMNS))
+    lines.extend(["", "## Summary", ""])
+    lines.extend(_render_table(payload["summary"], SUMMARY_COLUMNS))
+    lines.extend(["", "## Provider Results", ""])
+    lines.extend(_render_table(payload["results"], RESULT_COLUMNS))
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _render_table(rows: list[dict[str, Any]], columns: list[str]) -> list[str]:
+    if not rows:
+        return ["_Sin registros._"]
+
+    header = "| " + " | ".join(columns) + " |"
+    separator = "| " + " | ".join("---" for _ in columns) + " |"
+    body = [
+        "| " + " | ".join(_markdown_cell(row.get(column, "")) for column in columns) + " |"
+        for row in rows
+    ]
+    return [header, separator, *body]
+
+
+def _markdown_cell(value: Any) -> str:
+    if value is None:
+        return ""
+
+    return str(value).replace("|", "\\|").replace("\n", " ")

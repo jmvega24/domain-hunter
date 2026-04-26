@@ -21,6 +21,7 @@
 | Fase 4 | Multi-proveedor | `fase cerrada` | Agregar proveedor alterno y consolidar resultados por dominio. | La CLI permite elegir proveedor; resultados indican fuente y confianza. |
 | Fase 5 | Scoring y shortlist | `fase cerrada` | Ordenar candidatos por disponibilidad, precio, confianza y notas. | Export incluye score revisable y shortlist separada o filtrable. |
 | Fase 6 | Export estructurado | `fase cerrada` | Exportar JSON y CSV opcionales para iteraciones rápidas. | JSON y CSV contienen `results`, `summary` y `shortlist` equivalentes al Excel. |
+| Fase 7 | Reporte de revisión | `fase cerrada` | Exportar reporte Markdown para revisión manual. | Reporte contiene shortlist, resumen, resultados por proveedor y referencias a evidencia. |
 
 ## Alcance Detallado por Fase
 
@@ -121,6 +122,20 @@ Validación actual:
 - `PYTHONPATH=/tmp/domainhunter-deps python3 -m domainhunter check --file data/candidates.txt --provider all --output data/results.xlsx --json-output data/results.json --csv-dir data/csv --timeout-ms 15000 --delay-seconds 0 --evidence-dir logs --screenshots-on-error`: correcto.
 - Resultado real del proveedor en 2026-04-26: Excel, JSON y CSV generados; JSON contiene 8 `results`, 4 `summary` y 4 `shortlist`.
 
+### Fase 7 - Reporte de revisión
+
+- Agregar `--report-output`.
+- Reusar el mismo payload de resultados para renderizar Markdown.
+- Incluir secciones `Shortlist`, `Summary` y `Provider Results`.
+- Mantener el aviso de que el reporte no confirma disponibilidad legal ni registral.
+
+Validación actual:
+
+- `PYTHONPATH=/tmp/domainhunter-deps python3 -m pytest`: correcto, 24 pruebas pasan.
+- `PYTHONPATH=/tmp/domainhunter-deps python3 -m domainhunter check --file data/candidates.txt --provider all --json-output data/results.json --csv-dir data/csv --report-output data/report.md --dry-run`: correcto.
+- `PYTHONPATH=/tmp/domainhunter-deps python3 -m domainhunter check --file data/candidates.txt --provider all --output data/results.xlsx --json-output data/results.json --csv-dir data/csv --report-output data/report.md --timeout-ms 15000 --delay-seconds 0 --evidence-dir logs --screenshots-on-error`: correcto.
+- Resultado real del proveedor en 2026-04-26: `data/report.md` generado con 4 dominios en `revision_manual`.
+
 ## Dependencias y Riesgos
 
 - Playwright requiere instalación de navegador local.
@@ -133,3 +148,4 @@ Validación actual:
 - Fase 4 queda cerrada para multi-proveedor; el riesgo activo es que ambos proveedores requieran revisión manual para estos candidatos.
 - Fase 5 queda cerrada; el score es operativo y no reemplaza revisión marcaria ni confirmación manual de disponibilidad.
 - Fase 6 queda cerrada; los archivos estructurados generados están fuera de Git.
+- Fase 7 queda cerrada; el reporte Markdown es un artefacto de revisión y también queda fuera de Git.

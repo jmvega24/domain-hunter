@@ -4,9 +4,9 @@
 
 ## Estado Actual
 
-DomainHunter tiene Fase 6 cerrada: paquete Python, CLI, modelos, lector de candidatos, scrapers iniciales para GoDaddy y Namecheap, servicio de consulta, exportadores Excel/JSON/CSV, datos de ejemplo, pruebas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
+DomainHunter tiene Fase 7 cerrada: paquete Python, CLI, modelos, lector de candidatos, scrapers iniciales para GoDaddy y Namecheap, servicio de consulta, exportadores Excel/JSON/CSV/Markdown, datos de ejemplo, pruebas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
 
-Estado narrativo actual: `fase cerrada` para Fase 6. La siguiente acción recomendada es revisión manual de candidatos o mejora de selectores por proveedor.
+Estado narrativo actual: `fase cerrada` para Fase 7. La siguiente acción recomendada es revisión manual de candidatos o mejora de selectores por proveedor.
 
 ## Contexto de Negocio
 
@@ -80,6 +80,7 @@ Estados narrativos de fases:
 | Fase 4 | Multi-proveedor | `fase cerrada` | Agregar proveedor alterno y consolidar resultados. |
 | Fase 5 | Scoring y shortlist | `fase cerrada` | Puntuar candidatos por disponibilidad, precio, extensión y notas. |
 | Fase 6 | Export estructurado | `fase cerrada` | Exportar JSON y CSV opcionales para iteraciones rápidas. |
+| Fase 7 | Reporte de revisión | `fase cerrada` | Exportar reporte Markdown para revisión manual. |
 
 ## Próxima Acción Recomendada
 
@@ -108,6 +109,8 @@ Revisar manualmente la hoja `shortlist` y los screenshots asociados. Si se neces
 - Corrida real del 2026-04-26: los 4 dominios quedaron con score `40` y recomendación `revision_manual`.
 - Fase 6 agrega `--json-output` y `--csv-dir`.
 - Corrida real del 2026-04-26: `data/results.json` contiene 8 resultados, 4 summary y 4 shortlist; `data/csv/` contiene `results.csv`, `summary.csv` y `shortlist.csv`.
+- Fase 7 agrega `--report-output`.
+- Corrida real del 2026-04-26: `data/report.md` contiene secciones `Shortlist`, `Summary` y `Provider Results`, con 4 dominios en `revision_manual`.
 
 ## Contradicciones Detectadas
 

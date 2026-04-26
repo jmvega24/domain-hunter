@@ -16,7 +16,8 @@
 | Evidencia local crece con el tiempo | `logs/` puede acumular screenshots pesados. | Mantener `logs/` fuera de Git y limpiar manualmente cuando ya no sea útil. |
 | Score interpretado como certeza | Se podrían priorizar dominios sin disponibilidad confirmada. | Mantener `manual_review`, mostrar recomendación explícita y exigir revisión manual. |
 | Salidas generadas se confunden con fuente canónica | JSON/CSV/Excel pueden quedar obsoletos después de cambiar candidatos. | Regenerar salidas desde `data/candidates.txt` y mantener artefactos fuera de Git. |
+| Reporte Markdown se trata como dictamen final | Se podría olvidar que es solo una ayuda operativa. | Incluir aviso en el reporte y mantener estados `manual_review` cuando no hay evidencia suficiente. |
 
 ## Riesgo Operativo Actual
 
-El MVP multi-proveedor existe, exporta Excel/JSON/CSV, registra evidencia y genera shortlist. GoDaddy presentó validación humana y Namecheap no entregó evidencia suficiente en la prueba real, así que la decisión final sigue siendo revisión manual.
+El MVP multi-proveedor existe, exporta Excel/JSON/CSV/Markdown, registra evidencia y genera shortlist. GoDaddy presentó validación humana y Namecheap no entregó evidencia suficiente en la prueba real, así que la decisión final sigue siendo revisión manual.

@@ -6,9 +6,9 @@ Su propósito es acelerar el filtrado temprano de candidatos: leer una lista de 
 
 ## Estado Actual
 
-Estado del proyecto al 2026-04-26: Fase 6 cerrada.
+Estado del proyecto al 2026-04-26: Fase 7 cerrada.
 
-Ya existe paquete Python, CLI, modelos base, lector de candidatos, scrapers iniciales para GoDaddy y Namecheap, servicio de consulta, exportadores Excel/JSON/CSV, datos de ejemplo, pruebas básicas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
+Ya existe paquete Python, CLI, modelos base, lector de candidatos, scrapers iniciales para GoDaddy y Namecheap, servicio de consulta, exportadores Excel/JSON/CSV/Markdown, datos de ejemplo, pruebas básicas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
 
 ## Qué Hace Hoy
 
@@ -17,6 +17,7 @@ Ya existe paquete Python, CLI, modelos base, lector de candidatos, scrapers inic
 - Normaliza la taxonomía base de estados de dominio en el modelo.
 - Exporta resultados a `data/results.xlsx` en tres hojas: `results`, `summary` y `shortlist`.
 - Exporta JSON y CSV opcionales desde el mismo lote.
+- Exporta reporte Markdown opcional para revisión manual.
 - Calcula score y recomendación por dominio consolidado.
 - Continúa el lote aunque falle o sea ambiguo un dominio.
 - Registra eventos en `logs/events.jsonl`.
@@ -62,6 +63,7 @@ python -m domainhunter check --file data/candidates.txt --provider godaddy --out
 python -m domainhunter check --file data/candidates.txt --provider namecheap --output data/results.xlsx
 python -m domainhunter check --file data/candidates.txt --provider all --output data/results.xlsx
 python -m domainhunter check --file data/candidates.txt --provider all --json-output data/results.json --csv-dir data/csv
+python -m domainhunter check --file data/candidates.txt --provider all --report-output data/report.md
 python -m domainhunter check --file data/candidates.txt --dry-run
 python -m domainhunter check --file data/candidates.txt --timeout-ms 10000 --delay-seconds 0 --evidence-dir logs
 pytest
@@ -112,7 +114,7 @@ Columnas mínimas:
 | `notes` | Observaciones relevantes. |
 | `error_message` | Error técnico, si aplica. |
 
-La hoja `summary` agrega `score` y `recommendation`. La hoja `shortlist` filtra candidatos con score suficiente para revisión.
+La hoja `summary` agrega `score` y `recommendation`. La hoja `shortlist` filtra candidatos con score suficiente para revisión. El reporte Markdown contiene `Shortlist`, `Summary` y `Provider Results`.
 
 ## Estructura Esperada
 

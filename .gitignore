@@ -9,6 +9,7 @@ build/
 data/results.xlsx
 data/*.csv
 data/*.json
+data/*.md
 data/csv/
 screenshots/
 logs/
