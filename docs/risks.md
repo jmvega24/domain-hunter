@@ -15,7 +15,8 @@
 | Namecheap no entrega evidencia textual suficiente | No se puede confirmar disponibilidad desde ese proveedor con el parser actual. | Marcar `manual_review`, conservar screenshot y revisar selectores más estables en una fase futura. |
 | Evidencia local crece con el tiempo | `logs/` puede acumular screenshots pesados. | Mantener `logs/` fuera de Git y limpiar manualmente cuando ya no sea útil. |
 | Score interpretado como certeza | Se podrían priorizar dominios sin disponibilidad confirmada. | Mantener `manual_review`, mostrar recomendación explícita y exigir revisión manual. |
+| Salidas generadas se confunden con fuente canónica | JSON/CSV/Excel pueden quedar obsoletos después de cambiar candidatos. | Regenerar salidas desde `data/candidates.txt` y mantener artefactos fuera de Git. |
 
 ## Riesgo Operativo Actual
 
-El MVP multi-proveedor existe, exporta resultados, registra evidencia y genera shortlist. GoDaddy presentó validación humana y Namecheap no entregó evidencia suficiente en la prueba real, así que la decisión final sigue siendo revisión manual.
+El MVP multi-proveedor existe, exporta Excel/JSON/CSV, registra evidencia y genera shortlist. GoDaddy presentó validación humana y Namecheap no entregó evidencia suficiente en la prueba real, así que la decisión final sigue siendo revisión manual.

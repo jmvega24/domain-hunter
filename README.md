@@ -6,9 +6,9 @@ Su propósito es acelerar el filtrado temprano de candidatos: leer una lista de 
 
 ## Estado Actual
 
-Estado del proyecto al 2026-04-26: Fase 5 cerrada.
+Estado del proyecto al 2026-04-26: Fase 6 cerrada.
 
-Ya existe paquete Python, CLI, modelos base, lector de candidatos, scrapers iniciales para GoDaddy y Namecheap, servicio de consulta, exportador Excel con hojas de resultados, resumen y shortlist, datos de ejemplo, pruebas básicas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
+Ya existe paquete Python, CLI, modelos base, lector de candidatos, scrapers iniciales para GoDaddy y Namecheap, servicio de consulta, exportadores Excel/JSON/CSV, datos de ejemplo, pruebas básicas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
 
 ## Qué Hace Hoy
 
@@ -16,6 +16,7 @@ Ya existe paquete Python, CLI, modelos base, lector de candidatos, scrapers inic
 - Consulta GoDaddy y Namecheap mediante Playwright.
 - Normaliza la taxonomía base de estados de dominio en el modelo.
 - Exporta resultados a `data/results.xlsx` en tres hojas: `results`, `summary` y `shortlist`.
+- Exporta JSON y CSV opcionales desde el mismo lote.
 - Calcula score y recomendación por dominio consolidado.
 - Continúa el lote aunque falle o sea ambiguo un dominio.
 - Registra eventos en `logs/events.jsonl`.
@@ -60,6 +61,7 @@ python -m domainhunter check --file data/candidates.txt
 python -m domainhunter check --file data/candidates.txt --provider godaddy --output data/results.xlsx
 python -m domainhunter check --file data/candidates.txt --provider namecheap --output data/results.xlsx
 python -m domainhunter check --file data/candidates.txt --provider all --output data/results.xlsx
+python -m domainhunter check --file data/candidates.txt --provider all --json-output data/results.json --csv-dir data/csv
 python -m domainhunter check --file data/candidates.txt --dry-run
 python -m domainhunter check --file data/candidates.txt --timeout-ms 10000 --delay-seconds 0 --evidence-dir logs
 pytest
@@ -157,7 +159,7 @@ tests/
 
 1. Revisar manualmente los dominios que quedan en `manual_review`.
 2. Mejorar selectores específicos si se decide insistir con GoDaddy o Namecheap.
-3. Agregar export JSON/CSV si se vuelve necesario para iteraciones rápidas.
+3. Agregar nuevos candidatos en `data/candidates.txt` y regenerar salidas.
 
 ## Referencias Internas
 

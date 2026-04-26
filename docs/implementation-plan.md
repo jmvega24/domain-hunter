@@ -20,6 +20,7 @@
 | Fase 3 | Robustez operativa | `fase cerrada` | Agregar timeouts configurables, rate limiting, logs y evidencia mínima ante errores. | Casos de error, captcha/bloqueo y HTML ambiguo terminan en `manual_review` o `error` sin romper el lote. |
 | Fase 4 | Multi-proveedor | `fase cerrada` | Agregar proveedor alterno y consolidar resultados por dominio. | La CLI permite elegir proveedor; resultados indican fuente y confianza. |
 | Fase 5 | Scoring y shortlist | `fase cerrada` | Ordenar candidatos por disponibilidad, precio, confianza y notas. | Export incluye score revisable y shortlist separada o filtrable. |
+| Fase 6 | Export estructurado | `fase cerrada` | Exportar JSON y CSV opcionales para iteraciones rápidas. | JSON y CSV contienen `results`, `summary` y `shortlist` equivalentes al Excel. |
 
 ## Alcance Detallado por Fase
 
@@ -106,6 +107,20 @@ Validación actual:
 - `PYTHONPATH=/tmp/domainhunter-deps python3 -m domainhunter check --file data/candidates.txt --provider all --output data/results.xlsx --timeout-ms 15000 --delay-seconds 0 --evidence-dir logs --screenshots-on-error`: correcto.
 - Resultado real del proveedor en 2026-04-26: el Excel contiene hojas `results`, `summary` y `shortlist`; los 4 dominios quedaron con score `40` y recomendación `revision_manual`.
 
+### Fase 6 - Export estructurado
+
+- Agregar `--json-output`.
+- Agregar `--csv-dir`.
+- Reusar el mismo payload para Excel, JSON y CSV.
+- Exportar CSV separados: `results.csv`, `summary.csv` y `shortlist.csv`.
+
+Validación actual:
+
+- `PYTHONPATH=/tmp/domainhunter-deps python3 -m pytest`: correcto, 23 pruebas pasan.
+- `PYTHONPATH=/tmp/domainhunter-deps python3 -m domainhunter check --file data/candidates.txt --provider all --json-output data/results.json --csv-dir data/csv --dry-run`: correcto.
+- `PYTHONPATH=/tmp/domainhunter-deps python3 -m domainhunter check --file data/candidates.txt --provider all --output data/results.xlsx --json-output data/results.json --csv-dir data/csv --timeout-ms 15000 --delay-seconds 0 --evidence-dir logs --screenshots-on-error`: correcto.
+- Resultado real del proveedor en 2026-04-26: Excel, JSON y CSV generados; JSON contiene 8 `results`, 4 `summary` y 4 `shortlist`.
+
 ## Dependencias y Riesgos
 
 - Playwright requiere instalación de navegador local.
@@ -117,3 +132,4 @@ Validación actual:
 - Fase 3 queda cerrada para robustez mínima; el riesgo activo es que GoDaddy no permita confirmar disponibilidad desde automatización.
 - Fase 4 queda cerrada para multi-proveedor; el riesgo activo es que ambos proveedores requieran revisión manual para estos candidatos.
 - Fase 5 queda cerrada; el score es operativo y no reemplaza revisión marcaria ni confirmación manual de disponibilidad.
+- Fase 6 queda cerrada; los archivos estructurados generados están fuera de Git.

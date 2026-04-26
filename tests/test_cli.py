@@ -25,3 +25,26 @@ def test_check_command_accepts_all_providers_in_dry_run_mode(tmp_path: Path) -> 
 
     assert result.exit_code == 0
     assert "Proveedor(es): godaddy, namecheap" in result.output
+
+
+def test_check_command_reports_optional_structured_outputs_in_dry_run_mode(tmp_path: Path) -> None:
+    candidates = tmp_path / "candidates.txt"
+    candidates.write_text("clavora.com\n", encoding="utf-8")
+
+    result = CliRunner().invoke(
+        app,
+        [
+            "check",
+            "--file",
+            str(candidates),
+            "--json-output",
+            str(tmp_path / "results.json"),
+            "--csv-dir",
+            str(tmp_path / "csv"),
+            "--dry-run",
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert "Salida JSON:" in result.output
+    assert "Salida CSV:" in result.output

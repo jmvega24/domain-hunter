@@ -11,7 +11,8 @@ Bitácora breve de cambios relevantes. No registra fases cerradas sin evidencia 
 | 2026-04-26 | Fase 3 - Robustez operativa | `fase cerrada` | Se agrega configuración por `.env`, logs JSONL y screenshots ante `manual_review` o `error`. Se valida con 11 pruebas y corrida real contra GoDaddy. |
 | 2026-04-26 | Fase 4 - Multi-proveedor | `fase cerrada` | Se agrega Namecheap, `--provider all` y export Excel con hojas `results` y `summary`. Corrida real: 8 resultados y 4 filas consolidadas, todas `manual_review`. |
 | 2026-04-26 | Fase 5 - Scoring y shortlist | `fase cerrada` | Se agrega score, recomendación y hoja `shortlist`. Corrida real: 4 dominios con score 40 y recomendación `revision_manual`. |
+| 2026-04-26 | Fase 6 - Export estructurado | `fase cerrada` | Se agrega `--json-output` y `--csv-dir`. Corrida real: JSON con 8/4/4 registros y CSV separados para results, summary y shortlist. |
 
 ## Próximo Registro Esperado
 
-Revisar manualmente la shortlist o abrir fase nueva para export JSON/CSV.
+Revisar manualmente la shortlist o abrir fase nueva para mejorar selectores por proveedor.

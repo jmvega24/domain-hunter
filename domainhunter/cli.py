@@ -4,6 +4,10 @@ from typing import Annotated, Any
 
 from domainhunter.config import DomainHunterSettings
 from domainhunter.exporters.excel_exporter import export_results_to_excel
+from domainhunter.exporters.structured_exporter import (
+    export_results_to_csv,
+    export_results_to_json,
+)
 from domainhunter.io import read_candidate_domains
 from domainhunter.scrapers.factory import create_scraper, resolve_providers
 from domainhunter.services.domain_check_service import DomainCheckService
@@ -24,6 +28,8 @@ async def _run_check_async(
     headless: bool | None,
     screenshots_on_error: bool | None,
     evidence_dir: Path | None,
+    json_output: Path | None,
+    csv_dir: Path | None,
 ) -> int:
     settings = DomainHunterSettings.from_env()
     resolved_timeout_ms = timeout_ms if timeout_ms is not None else settings.timeout_ms
@@ -42,6 +48,10 @@ async def _run_check_async(
     print(f"Proveedor(es): {', '.join(providers)}")
     print(f"Entrada: {file}")
     print(f"Salida objetivo: {output}")
+    if json_output is not None:
+        print(f"Salida JSON: {json_output}")
+    if csv_dir is not None:
+        print(f"Salida CSV: {csv_dir}")
     print(f"Evidencia: {resolved_evidence_dir}")
     print(f"Dominios cargados: {len(domains)}")
 
@@ -66,8 +76,16 @@ async def _run_check_async(
         results.extend(await service.check_domains(domains))
 
     export_results_to_excel(results, output)
+    if json_output is not None:
+        export_results_to_json(results, json_output)
+    if csv_dir is not None:
+        export_results_to_csv(results, csv_dir)
 
     print(f"Resultados exportados: {output}")
+    if json_output is not None:
+        print(f"JSON exportado: {json_output}")
+    if csv_dir is not None:
+        print(f"CSV exportado: {csv_dir}")
     return 0
 
 
@@ -81,6 +99,8 @@ def _run_check(
     headless: bool | None,
     screenshots_on_error: bool | None,
     evidence_dir: Path | None,
+    json_output: Path | None,
+    csv_dir: Path | None,
 ) -> int:
     return asyncio.run(
         _run_check_async(
@@ -93,6 +113,8 @@ def _run_check(
             headless=headless,
             screenshots_on_error=screenshots_on_error,
             evidence_dir=evidence_dir,
+            json_output=json_output,
+            csv_dir=csv_dir,
         )
     )
 
@@ -149,6 +171,14 @@ if typer is not None:
             Path | None,
             typer.Option("--evidence-dir", help="Directorio para logs y screenshots."),
         ] = None,
+        json_output: Annotated[
+            Path | None,
+            typer.Option("--json-output", help="Archivo JSON opcional."),
+        ] = None,
+        csv_dir: Annotated[
+            Path | None,
+            typer.Option("--csv-dir", help="Directorio CSV opcional."),
+        ] = None,
     ) -> None:
         """Consulta dominios y exporta resultados normalizados."""
         exit_code = _run_check(
@@ -161,6 +191,8 @@ if typer is not None:
             headless=headless,
             screenshots_on_error=screenshots_on_error,
             evidence_dir=evidence_dir,
+            json_output=json_output,
+            csv_dir=csv_dir,
         )
         if exit_code:
             raise typer.Exit(code=exit_code)
@@ -195,6 +227,8 @@ else:
             dest="screenshots_on_error",
         )
         check_parser.add_argument("--evidence-dir", type=Path, default=None)
+        check_parser.add_argument("--json-output", type=Path, default=None)
+        check_parser.add_argument("--csv-dir", type=Path, default=None)
 
         args = parser.parse_args()
         if args.command == "check":
@@ -209,6 +243,8 @@ else:
                     headless=args.headless,
                     screenshots_on_error=args.screenshots_on_error,
                     evidence_dir=args.evidence_dir,
+                    json_output=args.json_output,
+                    csv_dir=args.csv_dir,
                 )
             )
 

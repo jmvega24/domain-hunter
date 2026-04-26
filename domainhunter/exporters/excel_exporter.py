@@ -1,8 +1,11 @@
 from pathlib import Path
 
 from domainhunter.models import DomainCheckResult
-from domainhunter.services.result_summary import summarize_results
-from domainhunter.services.scoring import shortlist_records
+from domainhunter.exporters.structured_exporter import (
+    RESULT_COLUMNS,
+    SUMMARY_COLUMNS,
+    build_export_payload,
+)
 
 
 def export_results_to_excel(results: list[DomainCheckResult], output_path: Path) -> None:
@@ -10,35 +13,10 @@ def export_results_to_excel(results: list[DomainCheckResult], output_path: Path)
     import pandas as pd
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    records = [result.to_record() for result in results]
-    columns = [
-        "domain",
-        "provider",
-        "status",
-        "price",
-        "currency",
-        "checked_at",
-        "confidence",
-        "notes",
-        "error_message",
-    ]
-    results_dataframe = pd.DataFrame(records, columns=columns)
-    summary_records = summarize_results(results)
-    summary_columns = [
-        "domain",
-        "summary_status",
-        "summary_confidence",
-        "providers_checked",
-        "provider_statuses",
-        "score",
-        "recommendation",
-        "notes",
-    ]
-    summary_dataframe = pd.DataFrame(summary_records, columns=summary_columns)
-    shortlist_dataframe = pd.DataFrame(
-        shortlist_records(summary_records),
-        columns=summary_columns,
-    )
+    payload = build_export_payload(results)
+    results_dataframe = pd.DataFrame(payload["results"], columns=RESULT_COLUMNS)
+    summary_dataframe = pd.DataFrame(payload["summary"], columns=SUMMARY_COLUMNS)
+    shortlist_dataframe = pd.DataFrame(payload["shortlist"], columns=SUMMARY_COLUMNS)
 
     with pd.ExcelWriter(output_path) as writer:
         results_dataframe.to_excel(writer, index=False, sheet_name="results")
