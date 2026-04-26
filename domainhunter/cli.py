@@ -2,6 +2,7 @@ import asyncio
 from pathlib import Path
 from typing import Annotated, Any
 
+from domainhunter.config import DomainHunterSettings
 from domainhunter.exporters.excel_exporter import export_results_to_excel
 from domainhunter.io import read_candidate_domains
 from domainhunter.scrapers.factory import create_scraper
@@ -18,15 +19,29 @@ async def _run_check_async(
     provider: str,
     output: Path,
     dry_run: bool,
-    timeout_ms: int,
-    delay_seconds: float,
-    headless: bool,
+    timeout_ms: int | None,
+    delay_seconds: float | None,
+    headless: bool | None,
+    screenshots_on_error: bool | None,
+    evidence_dir: Path | None,
 ) -> int:
+    settings = DomainHunterSettings.from_env()
+    resolved_timeout_ms = timeout_ms if timeout_ms is not None else settings.timeout_ms
+    resolved_delay_seconds = delay_seconds if delay_seconds is not None else settings.delay_seconds
+    resolved_headless = headless if headless is not None else settings.headless
+    resolved_screenshots_on_error = (
+        screenshots_on_error
+        if screenshots_on_error is not None
+        else settings.screenshots_on_error
+    )
+    resolved_evidence_dir = evidence_dir if evidence_dir is not None else settings.evidence_dir
+
     domains = read_candidate_domains(file)
 
     print(f"Proveedor: {provider}")
     print(f"Entrada: {file}")
     print(f"Salida objetivo: {output}")
+    print(f"Evidencia: {resolved_evidence_dir}")
     print(f"Dominios cargados: {len(domains)}")
 
     for domain in domains:
@@ -36,8 +51,14 @@ async def _run_check_async(
         print("Modo dry-run: no se ejecuta scraping ni exportacion.")
         return 0
 
-    scraper = create_scraper(provider=provider, timeout_ms=timeout_ms, headless=headless)
-    service = DomainCheckService(scraper=scraper, delay_seconds=delay_seconds)
+    scraper = create_scraper(
+        provider=provider,
+        timeout_ms=resolved_timeout_ms,
+        headless=resolved_headless,
+        screenshots_on_error=resolved_screenshots_on_error,
+        evidence_dir=resolved_evidence_dir,
+    )
+    service = DomainCheckService(scraper=scraper, delay_seconds=resolved_delay_seconds)
     results = await service.check_domains(domains)
     export_results_to_excel(results, output)
 
@@ -50,9 +71,11 @@ def _run_check(
     provider: str,
     output: Path,
     dry_run: bool,
-    timeout_ms: int,
-    delay_seconds: float,
-    headless: bool,
+    timeout_ms: int | None,
+    delay_seconds: float | None,
+    headless: bool | None,
+    screenshots_on_error: bool | None,
+    evidence_dir: Path | None,
 ) -> int:
     return asyncio.run(
         _run_check_async(
@@ -63,6 +86,8 @@ def _run_check(
             timeout_ms=timeout_ms,
             delay_seconds=delay_seconds,
             headless=headless,
+            screenshots_on_error=screenshots_on_error,
+            evidence_dir=evidence_dir,
         )
     )
 
@@ -97,17 +122,28 @@ if typer is not None:
             typer.Option("--dry-run", help="Lee candidatos sin ejecutar scraping ni exportar."),
         ] = False,
         timeout_ms: Annotated[
-            int,
+            int | None,
             typer.Option("--timeout-ms", help="Timeout de navegacion por dominio."),
-        ] = 30_000,
+        ] = None,
         delay_seconds: Annotated[
-            float,
+            float | None,
             typer.Option("--delay-seconds", help="Pausa entre consultas para reducir bloqueos."),
-        ] = 1.5,
+        ] = None,
         headless: Annotated[
-            bool,
+            bool | None,
             typer.Option("--headless/--headed", help="Ejecutar navegador en modo headless."),
-        ] = True,
+        ] = None,
+        screenshots_on_error: Annotated[
+            bool | None,
+            typer.Option(
+                "--screenshots-on-error/--no-screenshots-on-error",
+                help="Guardar screenshots ante captcha, bloqueo o error.",
+            ),
+        ] = None,
+        evidence_dir: Annotated[
+            Path | None,
+            typer.Option("--evidence-dir", help="Directorio para logs y screenshots."),
+        ] = None,
     ) -> None:
         """Consulta dominios y exporta resultados normalizados."""
         exit_code = _run_check(
@@ -118,6 +154,8 @@ if typer is not None:
             timeout_ms=timeout_ms,
             delay_seconds=delay_seconds,
             headless=headless,
+            screenshots_on_error=screenshots_on_error,
+            evidence_dir=evidence_dir,
         )
         if exit_code:
             raise typer.Exit(code=exit_code)
@@ -141,9 +179,17 @@ else:
         check_parser.add_argument("--provider", "-p", default="godaddy")
         check_parser.add_argument("--output", "-o", type=Path, default=Path("data/results.xlsx"))
         check_parser.add_argument("--dry-run", action="store_true", default=False)
-        check_parser.add_argument("--timeout-ms", type=int, default=30_000)
-        check_parser.add_argument("--delay-seconds", type=float, default=1.5)
-        check_parser.add_argument("--headed", action="store_true", default=False)
+        check_parser.add_argument("--timeout-ms", type=int, default=None)
+        check_parser.add_argument("--delay-seconds", type=float, default=None)
+        check_parser.add_argument("--headless", action="store_true", default=None)
+        check_parser.add_argument("--headed", action="store_false", dest="headless")
+        check_parser.add_argument("--screenshots-on-error", action="store_true", default=None)
+        check_parser.add_argument(
+            "--no-screenshots-on-error",
+            action="store_false",
+            dest="screenshots_on_error",
+        )
+        check_parser.add_argument("--evidence-dir", type=Path, default=None)
 
         args = parser.parse_args()
         if args.command == "check":
@@ -155,7 +201,9 @@ else:
                     dry_run=args.dry_run,
                     timeout_ms=args.timeout_ms,
                     delay_seconds=args.delay_seconds,
-                    headless=not args.headed,
+                    headless=args.headless,
+                    screenshots_on_error=args.screenshots_on_error,
+                    evidence_dir=args.evidence_dir,
                 )
             )
 

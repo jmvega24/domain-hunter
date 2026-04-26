@@ -4,9 +4,9 @@
 
 ## Estado Actual
 
-DomainHunter tiene Fase 2 cerrada para MVP básico: paquete Python, CLI, modelos, lector de candidatos, scraper GoDaddy inicial, servicio de consulta, exportador Excel, datos de ejemplo y pruebas.
+DomainHunter tiene Fase 3 cerrada: paquete Python, CLI, modelos, lector de candidatos, scraper GoDaddy inicial, servicio de consulta, exportador Excel, datos de ejemplo, pruebas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
 
-Estado narrativo actual: `fase cerrada` para Fase 2. La siguiente fase recomendada es robustez operativa.
+Estado narrativo actual: `fase cerrada` para Fase 3. La siguiente fase recomendada es multi-proveedor.
 
 ## Contexto de Negocio
 
@@ -76,13 +76,13 @@ Estados narrativos de fases:
 | Fase 0 | Normalización documental inicial | `implementacion lista` | Alinear README, contexto y documentos base. |
 | Fase 1 | Setup técnico | `fase cerrada` | Crear estructura Python, dependencias, CLI base, carpetas y datos de ejemplo. |
 | Fase 2 | MVP de validación | `fase cerrada` | Leer candidatos, consultar proveedor inicial, clasificar y exportar Excel. |
-| Fase 3 | Robustez operativa | `backlog` | Timeouts, screenshots, logs, rate limiting y manejo de captcha/bloqueo. |
+| Fase 3 | Robustez operativa | `fase cerrada` | Timeouts, screenshots, logs, rate limiting y manejo de captcha/bloqueo. |
 | Fase 4 | Multi-proveedor | `backlog` | Agregar proveedor alterno y consolidar resultados. |
 | Fase 5 | Scoring y shortlist | `backlog` | Puntuar candidatos por disponibilidad, precio, extensión y notas. |
 
 ## Próxima Acción Recomendada
 
-Iniciar Fase 3: agregar evidencia mínima ante errores/captcha, configuración por `.env`, y endurecer el manejo de timeouts, bloqueos y logs.
+Iniciar Fase 4: evaluar un proveedor alterno, idealmente Namecheap u otro flujo público más estable, y consolidar resultados por dominio.
 
 ## Notas Técnicas Vigentes
 
@@ -97,6 +97,9 @@ Iniciar Fase 3: agregar evidencia mínima ante errores/captcha, configuración p
 - Chromium de Playwright fue instalado en `/home/jvega/.cache/ms-playwright`.
 - GoDaddy mostró captcha/bloqueo en la corrida del 2026-04-26; los resultados se exportaron como `manual_review`.
 - `data/results.xlsx` se genera localmente y está ignorado por Git.
+- Fase 3 genera `logs/events.jsonl` con proveedor, dominio, estado, mensaje, timestamp, screenshot y error si aplica.
+- Fase 3 guarda screenshots en `logs/screenshots/` cuando Playwright logra abrir una página.
+- `.env.example` documenta `DOMAINHUNTER_HEADLESS`, `DOMAINHUNTER_TIMEOUT_MS`, `DOMAINHUNTER_DELAY_SECONDS`, `DOMAINHUNTER_SCREENSHOTS_ON_ERROR` y `DOMAINHUNTER_EVIDENCE_DIR`.
 
 ## Contradicciones Detectadas
 

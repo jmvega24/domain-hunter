@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
+from pathlib import Path
 from urllib.parse import quote_plus
 
+from domainhunter.evidence import EvidenceRecorder, append_evidence_note
 from domainhunter.models import Confidence, DomainCheckResult, DomainStatus
 from domainhunter.scrapers.base import BaseScraper
 
@@ -8,9 +10,19 @@ from domainhunter.scrapers.base import BaseScraper
 class GoDaddyScraper(BaseScraper):
     provider = "godaddy"
 
-    def __init__(self, timeout_ms: int = 30_000, headless: bool = True) -> None:
+    def __init__(
+        self,
+        timeout_ms: int = 30_000,
+        headless: bool = True,
+        screenshots_on_error: bool = True,
+        evidence_dir: Path = Path("logs"),
+    ) -> None:
         self.timeout_ms = timeout_ms
         self.headless = headless
+        self.evidence = EvidenceRecorder(
+            base_dir=evidence_dir,
+            screenshots_enabled=screenshots_on_error,
+        )
 
     async def check_domain(self, domain: str) -> DomainCheckResult:
         checked_at = datetime.now(timezone.utc)
@@ -19,13 +31,22 @@ class GoDaddyScraper(BaseScraper):
             from playwright.async_api import TimeoutError as PlaywrightTimeoutError
             from playwright.async_api import async_playwright
         except ModuleNotFoundError as exc:
+            notes = "Playwright no esta instalado en el entorno actual."
+            self.evidence.record_event(
+                provider=self.provider,
+                domain=domain,
+                status=DomainStatus.ERROR,
+                message=notes,
+                checked_at=checked_at,
+                error_message=str(exc),
+            )
             return DomainCheckResult(
                 domain=domain,
                 provider=self.provider,
                 status=DomainStatus.ERROR,
                 checked_at=checked_at,
                 confidence=Confidence.LOW,
-                notes="Playwright no esta instalado en el entorno actual.",
+                notes=notes,
                 error_message=str(exc),
             )
 
@@ -46,6 +67,24 @@ class GoDaddyScraper(BaseScraper):
                 body_text = await page.locator("body").inner_text(timeout=self.timeout_ms)
 
                 status, confidence, notes = classify_godaddy_text(body_text, domain)
+                if status in {DomainStatus.MANUAL_REVIEW, DomainStatus.ERROR}:
+                    screenshot_path = await self.evidence.screenshot(
+                        page=page,
+                        provider=self.provider,
+                        domain=domain,
+                        reason=status.value,
+                        checked_at=checked_at,
+                    )
+                    self.evidence.record_event(
+                        provider=self.provider,
+                        domain=domain,
+                        status=status,
+                        message=notes,
+                        checked_at=checked_at,
+                        screenshot_path=screenshot_path,
+                    )
+                    notes = append_evidence_note(notes, screenshot_path)
+
                 return DomainCheckResult(
                     domain=domain,
                     provider=self.provider,
@@ -55,23 +94,57 @@ class GoDaddyScraper(BaseScraper):
                     notes=notes,
                 )
         except PlaywrightTimeoutError as exc:
+            notes = "Timeout consultando GoDaddy."
+            screenshot_path = await self.evidence.screenshot(
+                page=page,
+                provider=self.provider,
+                domain=domain,
+                reason="timeout",
+                checked_at=checked_at,
+            )
+            self.evidence.record_event(
+                provider=self.provider,
+                domain=domain,
+                status=DomainStatus.ERROR,
+                message=notes,
+                checked_at=checked_at,
+                screenshot_path=screenshot_path,
+                error_message=str(exc),
+            )
             return DomainCheckResult(
                 domain=domain,
                 provider=self.provider,
                 status=DomainStatus.ERROR,
                 checked_at=checked_at,
                 confidence=Confidence.LOW,
-                notes="Timeout consultando GoDaddy.",
+                notes=append_evidence_note(notes, screenshot_path),
                 error_message=str(exc),
             )
         except Exception as exc:  # noqa: BLE001 - debe continuar el lote
+            notes = "Error tecnico consultando GoDaddy."
+            screenshot_path = await self.evidence.screenshot(
+                page=page,
+                provider=self.provider,
+                domain=domain,
+                reason="error",
+                checked_at=checked_at,
+            )
+            self.evidence.record_event(
+                provider=self.provider,
+                domain=domain,
+                status=DomainStatus.ERROR,
+                message=notes,
+                checked_at=checked_at,
+                screenshot_path=screenshot_path,
+                error_message=str(exc),
+            )
             return DomainCheckResult(
                 domain=domain,
                 provider=self.provider,
                 status=DomainStatus.ERROR,
                 checked_at=checked_at,
                 confidence=Confidence.LOW,
-                notes="Error tecnico consultando GoDaddy.",
+                notes=append_evidence_note(notes, screenshot_path),
                 error_message=str(exc),
             )
         finally:

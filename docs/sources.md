@@ -17,6 +17,7 @@ Este archivo documenta proveedores, URLs, selectores y observaciones de scraping
 - Método actual: Playwright abre la página, lee texto visible de `body` y aplica señales conservadoras.
 - Resultado observado el 2026-04-26: captcha, bloqueo o validación humana.
 - Estado asignado ante ese caso: `manual_review`.
+- Evidencia generada: `logs/events.jsonl` y screenshots en `logs/screenshots/`.
 - No hay selectores específicos de disponibilidad validados todavía.
 - No se intentó evadir la validación humana.
 

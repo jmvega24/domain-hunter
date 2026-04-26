@@ -6,9 +6,9 @@ Su propósito es acelerar el filtrado temprano de candidatos: leer una lista de 
 
 ## Estado Actual
 
-Estado del proyecto al 2026-04-26: Fase 2 cerrada para MVP básico.
+Estado del proyecto al 2026-04-26: Fase 3 cerrada.
 
-Ya existe paquete Python, `pyproject.toml`, CLI, modelos base, lector de candidatos, scraper GoDaddy inicial, servicio de consulta, exportador Excel, datos de ejemplo y pruebas básicas. En la validación real GoDaddy mostró captcha/bloqueo, por lo que los dominios se exportaron como `manual_review`.
+Ya existe paquete Python, CLI, modelos base, lector de candidatos, scraper GoDaddy inicial, servicio de consulta, exportador Excel, datos de ejemplo, pruebas básicas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
 
 ## Qué Hace Hoy
 
@@ -17,11 +17,12 @@ Ya existe paquete Python, `pyproject.toml`, CLI, modelos base, lector de candida
 - Normaliza la taxonomía base de estados de dominio en el modelo.
 - Exporta resultados a `data/results.xlsx`.
 - Continúa el lote aunque falle o sea ambiguo un dominio.
-- Ejecuta pruebas básicas de setup, lectura, exportación y clasificación.
+- Registra eventos en `logs/events.jsonl`.
+- Guarda screenshots en `logs/screenshots/` cuando hay página disponible.
+- Ejecuta pruebas básicas de setup, configuración, lectura, exportación, evidencia y clasificación.
 
 ## Qué Hará el MVP
 
-- Agregar evidencia mínima de errores, captchas o bloqueos.
 - Evaluar un segundo proveedor si GoDaddy no resulta estable.
 - Exportar JSON/CSV más adelante.
 
@@ -58,7 +59,20 @@ playwright install chromium
 python -m domainhunter check --file data/candidates.txt
 python -m domainhunter check --file data/candidates.txt --provider godaddy --output data/results.xlsx
 python -m domainhunter check --file data/candidates.txt --dry-run
+python -m domainhunter check --file data/candidates.txt --timeout-ms 10000 --delay-seconds 0 --evidence-dir logs
 pytest
+```
+
+## Configuración
+
+Copiar `.env.example` a `.env` si se quieren cambiar defaults locales:
+
+```env
+DOMAINHUNTER_HEADLESS=true
+DOMAINHUNTER_TIMEOUT_MS=30000
+DOMAINHUNTER_DELAY_SECONDS=1.5
+DOMAINHUNTER_SCREENSHOTS_ON_ERROR=true
+DOMAINHUNTER_EVIDENCE_DIR=logs
 ```
 
 ## Entrada Esperada
@@ -137,9 +151,9 @@ tests/
 
 ## Próximos Pasos
 
-1. Agregar screenshots/logs ante captcha, bloqueo o error.
-2. Mover timeouts, delay y headless a configuración `.env`.
-3. Evaluar si GoDaddy es suficientemente estable o si conviene validar un proveedor alterno.
+1. Evaluar proveedor alterno si GoDaddy sigue mostrando validación humana.
+2. Consolidar resultados multi-proveedor.
+3. Agregar export JSON/CSV si se vuelve necesario para iteraciones rápidas.
 
 ## Referencias Internas
 

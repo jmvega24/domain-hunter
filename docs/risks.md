@@ -12,7 +12,8 @@
 | Sobreconfianza en disponibilidad | Decisiones de marca incorrectas. | Documentar que no sustituye revisión legal ni confirmación de compra. |
 | Dependencias no instaladas en entorno local | No se puede ejecutar `pytest` ni Typer real. | Instalar soporte de venv/pip o usar un entorno Python preparado. |
 | GoDaddy muestra captcha/bloqueo | No se puede confirmar disponibilidad desde ese proveedor. | Marcar `manual_review`, registrar evidencia y evaluar proveedor alterno. |
+| Evidencia local crece con el tiempo | `logs/` puede acumular screenshots pesados. | Mantener `logs/` fuera de Git y limpiar manualmente cuando ya no sea útil. |
 
 ## Riesgo Operativo Actual
 
-El MVP básico existe y exporta resultados, pero GoDaddy presentó validación humana en la prueba real. La siguiente fase debe mejorar evidencia operativa y evaluar estabilidad del proveedor.
+El MVP básico existe, exporta resultados y registra evidencia. GoDaddy presentó validación humana en la prueba real, así que la siguiente fase debe evaluar un proveedor alterno.
