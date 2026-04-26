@@ -1,6 +1,6 @@
 # Riesgos - DomainHunter
 
-Última actualización: 2026-04-25
+Última actualización: 2026-04-26
 
 ## Riesgos Principales
 
@@ -11,7 +11,8 @@
 | Resultados variables por sesión o ubicación | Precios/disponibilidad inconsistentes. | Registrar proveedor, fecha, notas y confianza. Confirmar manualmente finalistas. |
 | Sobreconfianza en disponibilidad | Decisiones de marca incorrectas. | Documentar que no sustituye revisión legal ni confirmación de compra. |
 | Dependencias no instaladas en entorno local | No se puede ejecutar `pytest` ni Typer real. | Instalar soporte de venv/pip o usar un entorno Python preparado. |
+| GoDaddy muestra captcha/bloqueo | No se puede confirmar disponibilidad desde ese proveedor. | Marcar `manual_review`, registrar evidencia y evaluar proveedor alterno. |
 
 ## Riesgo Operativo Actual
 
-El setup técnico base existe, pero la auditoría completa de Fase 1 requiere instalar dependencias de desarrollo y ejecutar `pytest`.
+El MVP básico existe y exporta resultados, pero GoDaddy presentó validación humana en la prueba real. La siguiente fase debe mejorar evidencia operativa y evaluar estabilidad del proveedor.

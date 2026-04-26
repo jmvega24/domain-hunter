@@ -4,9 +4,9 @@
 
 ## Estado Actual
 
-DomainHunter tiene la Fase 1 cerrada: paquete Python, `pyproject.toml`, CLI mínima, modelos base, lector de candidatos, carpetas esperadas, datos de ejemplo y pruebas básicas.
+DomainHunter tiene Fase 2 cerrada para MVP básico: paquete Python, CLI, modelos, lector de candidatos, scraper GoDaddy inicial, servicio de consulta, exportador Excel, datos de ejemplo y pruebas.
 
-Estado narrativo actual: `fase cerrada` para Fase 1. El MVP de scraping y exportación real sigue en `backlog`.
+Estado narrativo actual: `fase cerrada` para Fase 2. La siguiente fase recomendada es robustez operativa.
 
 ## Contexto de Negocio
 
@@ -75,14 +75,14 @@ Estados narrativos de fases:
 |---|---|---|---|
 | Fase 0 | Normalización documental inicial | `implementacion lista` | Alinear README, contexto y documentos base. |
 | Fase 1 | Setup técnico | `fase cerrada` | Crear estructura Python, dependencias, CLI base, carpetas y datos de ejemplo. |
-| Fase 2 | MVP de validación | `backlog` | Leer candidatos, consultar proveedor inicial, clasificar y exportar Excel. |
+| Fase 2 | MVP de validación | `fase cerrada` | Leer candidatos, consultar proveedor inicial, clasificar y exportar Excel. |
 | Fase 3 | Robustez operativa | `backlog` | Timeouts, screenshots, logs, rate limiting y manejo de captcha/bloqueo. |
 | Fase 4 | Multi-proveedor | `backlog` | Agregar proveedor alterno y consolidar resultados. |
 | Fase 5 | Scoring y shortlist | `backlog` | Puntuar candidatos por disponibilidad, precio, extensión y notas. |
 
 ## Próxima Acción Recomendada
 
-Iniciar Fase 2 con exportador Excel y primer scraper Playwright validado en ejecución.
+Iniciar Fase 3: agregar evidencia mínima ante errores/captcha, configuración por `.env`, y endurecer el manejo de timeouts, bloqueos y logs.
 
 ## Notas Técnicas Vigentes
 
@@ -94,10 +94,13 @@ Iniciar Fase 2 con exportador Excel y primer scraper Playwright validado en ejec
 - No declarar una fase como `fase cerrada` sin ejecución verificable.
 - Fase 1 se validó con dependencias instaladas de forma temporal en `/tmp/domainhunter-deps`, porque el sistema no tiene `python3.12-venv/ensurepip`.
 - `PYTHONPATH=/tmp/domainhunter-deps python3 -m domainhunter --help`, `PYTHONPATH=/tmp/domainhunter-deps python3 -m domainhunter check --file data/candidates.txt`, `PYTHONPATH=/tmp/domainhunter-deps python3 -m compileall domainhunter tests` y `PYTHONPATH=/tmp/domainhunter-deps python3 -m pytest` ejecutan correctamente.
+- Chromium de Playwright fue instalado en `/home/jvega/.cache/ms-playwright`.
+- GoDaddy mostró captcha/bloqueo en la corrida del 2026-04-26; los resultados se exportaron como `manual_review`.
+- `data/results.xlsx` se genera localmente y está ignorado por Git.
 
 ## Contradicciones Detectadas
 
-- `README.md` anterior describía scraping y exportación como capacidades actuales. Se ajustó para separar capacidades presentes de alcance MVP pendiente.
+- `README.md` anterior describía scraping y exportación como capacidades pendientes. Ya existe CLI, scraper inicial y exportación Excel.
 - `AGENTS.md` usaba estados con acentos, mientras la tarea actual solicita estados sin acentos. Se normaliza la documentación operativa a estados sin acentos.
 
 ## Referencias Internas

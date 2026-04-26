@@ -1,7 +1,11 @@
+import asyncio
 from pathlib import Path
 from typing import Annotated, Any
 
+from domainhunter.exporters.excel_exporter import export_results_to_excel
 from domainhunter.io import read_candidate_domains
+from domainhunter.scrapers.factory import create_scraper
+from domainhunter.services.domain_check_service import DomainCheckService
 
 try:
     import typer
@@ -9,7 +13,15 @@ except ModuleNotFoundError:  # pragma: no cover - used only before deps are inst
     typer = None
 
 
-def _run_check(file: Path, provider: str, output: Path, dry_run: bool) -> int:
+async def _run_check_async(
+    file: Path,
+    provider: str,
+    output: Path,
+    dry_run: bool,
+    timeout_ms: int,
+    delay_seconds: float,
+    headless: bool,
+) -> int:
     domains = read_candidate_domains(file)
 
     print(f"Proveedor: {provider}")
@@ -21,11 +33,38 @@ def _run_check(file: Path, provider: str, output: Path, dry_run: bool) -> int:
         print(f"- {domain}")
 
     if dry_run:
-        print("Modo dry-run: scraping y exportacion quedan pendientes para Fase 2.")
+        print("Modo dry-run: no se ejecuta scraping ni exportacion.")
         return 0
 
-    print("Scraping no implementado todavia. Ejecuta con --dry-run en Fase 1.")
-    return 2
+    scraper = create_scraper(provider=provider, timeout_ms=timeout_ms, headless=headless)
+    service = DomainCheckService(scraper=scraper, delay_seconds=delay_seconds)
+    results = await service.check_domains(domains)
+    export_results_to_excel(results, output)
+
+    print(f"Resultados exportados: {output}")
+    return 0
+
+
+def _run_check(
+    file: Path,
+    provider: str,
+    output: Path,
+    dry_run: bool,
+    timeout_ms: int,
+    delay_seconds: float,
+    headless: bool,
+) -> int:
+    return asyncio.run(
+        _run_check_async(
+            file=file,
+            provider=provider,
+            output=output,
+            dry_run=dry_run,
+            timeout_ms=timeout_ms,
+            delay_seconds=delay_seconds,
+            headless=headless,
+        )
+    )
 
 
 if typer is not None:
@@ -51,18 +90,35 @@ if typer is not None:
         ] = "godaddy",
         output: Annotated[
             Path,
-            typer.Option("--output", "-o", help="Archivo de salida objetivo."),
+            typer.Option("--output", "-o", help="Archivo de salida Excel."),
         ] = Path("data/results.xlsx"),
         dry_run: Annotated[
             bool,
-            typer.Option("--dry-run", help="Lee candidatos sin ejecutar scraping."),
+            typer.Option("--dry-run", help="Lee candidatos sin ejecutar scraping ni exportar."),
+        ] = False,
+        timeout_ms: Annotated[
+            int,
+            typer.Option("--timeout-ms", help="Timeout de navegacion por dominio."),
+        ] = 30_000,
+        delay_seconds: Annotated[
+            float,
+            typer.Option("--delay-seconds", help="Pausa entre consultas para reducir bloqueos."),
+        ] = 1.5,
+        headless: Annotated[
+            bool,
+            typer.Option("--headless/--headed", help="Ejecutar navegador en modo headless."),
         ] = True,
     ) -> None:
-        """Lee candidatos y muestra el plan de validacion.
-
-        Fase 1 no ejecuta scraping ni exporta Excel; deja lista la interfaz para Fase 2.
-        """
-        exit_code = _run_check(file=file, provider=provider, output=output, dry_run=dry_run)
+        """Consulta dominios y exporta resultados normalizados."""
+        exit_code = _run_check(
+            file=file,
+            provider=provider,
+            output=output,
+            dry_run=dry_run,
+            timeout_ms=timeout_ms,
+            delay_seconds=delay_seconds,
+            headless=headless,
+        )
         if exit_code:
             raise typer.Exit(code=exit_code)
 else:
@@ -79,12 +135,15 @@ else:
         subparsers = parser.add_subparsers(dest="command")
         check_parser = subparsers.add_parser(
             "check",
-            help="Lee candidatos y muestra el plan de validacion.",
+            help="Consulta dominios y exporta resultados normalizados.",
         )
         check_parser.add_argument("--file", "-f", type=Path, default=Path("data/candidates.txt"))
         check_parser.add_argument("--provider", "-p", default="godaddy")
         check_parser.add_argument("--output", "-o", type=Path, default=Path("data/results.xlsx"))
-        check_parser.add_argument("--dry-run", action="store_true", default=True)
+        check_parser.add_argument("--dry-run", action="store_true", default=False)
+        check_parser.add_argument("--timeout-ms", type=int, default=30_000)
+        check_parser.add_argument("--delay-seconds", type=float, default=1.5)
+        check_parser.add_argument("--headed", action="store_true", default=False)
 
         args = parser.parse_args()
         if args.command == "check":
@@ -94,6 +153,9 @@ else:
                     provider=args.provider,
                     output=args.output,
                     dry_run=args.dry_run,
+                    timeout_ms=args.timeout_ms,
+                    delay_seconds=args.delay_seconds,
+                    headless=not args.headed,
                 )
             )
 

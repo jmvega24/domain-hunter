@@ -1,6 +1,6 @@
 # Fuentes y Proveedores - DomainHunter
 
-Última actualización: 2026-04-25
+Última actualización: 2026-04-26
 
 Este archivo documenta proveedores, URLs, selectores y observaciones de scraping. No se deben registrar selectores como válidos hasta verificarlos en ejecución.
 
@@ -8,8 +8,17 @@ Este archivo documenta proveedores, URLs, selectores y observaciones de scraping
 
 | Proveedor | Estado | Prioridad | Nota |
 |---|---|---:|---|
-| GoDaddy | `backlog` | Alta | Candidato inicial por relevancia como registrador común. Selectores pendientes de validación. |
+| GoDaddy | `fase cerrada` para MVP básico | Alta | Se consultó con Playwright el 2026-04-26. Mostró captcha/bloqueo, por lo que la clasificación correcta fue `manual_review`. |
 | Namecheap | `backlog` | Media | Candidato alterno para contraste futuro. Selectores pendientes de validación. |
+
+## GoDaddy
+
+- URL usada: `https://www.godaddy.com/domainsearch/find?domainToCheck={domain}`
+- Método actual: Playwright abre la página, lee texto visible de `body` y aplica señales conservadoras.
+- Resultado observado el 2026-04-26: captcha, bloqueo o validación humana.
+- Estado asignado ante ese caso: `manual_review`.
+- No hay selectores específicos de disponibilidad validados todavía.
+- No se intentó evadir la validación humana.
 
 ## Reglas de Documentación de Selectores
 

@@ -6,24 +6,24 @@ Su propósito es acelerar el filtrado temprano de candidatos: leer una lista de 
 
 ## Estado Actual
 
-Estado del proyecto al 2026-04-26: Fase 1 cerrada.
+Estado del proyecto al 2026-04-26: Fase 2 cerrada para MVP básico.
 
-Ya existe paquete Python, `pyproject.toml`, CLI mínima, modelos base, lector de candidatos, datos de ejemplo y pruebas básicas. El scraping y la exportación Excel real quedan para Fase 2.
+Ya existe paquete Python, `pyproject.toml`, CLI, modelos base, lector de candidatos, scraper GoDaddy inicial, servicio de consulta, exportador Excel, datos de ejemplo y pruebas básicas. En la validación real GoDaddy mostró captcha/bloqueo, por lo que los dominios se exportaron como `manual_review`.
 
 ## Qué Hace Hoy
 
 - Lee candidatos desde un archivo de texto.
-- Expone una CLI mínima para ejecutar una revisión en modo `dry-run`.
+- Consulta GoDaddy mediante Playwright.
 - Normaliza la taxonomía base de estados de dominio en el modelo.
-- Incluye contratos base para scraper, servicio y exportador.
-- Ejecuta pruebas básicas de setup y lectura de candidatos.
+- Exporta resultados a `data/results.xlsx`.
+- Continúa el lote aunque falle o sea ambiguo un dominio.
+- Ejecuta pruebas básicas de setup, lectura, exportación y clasificación.
 
 ## Qué Hará el MVP
 
-- Consultar un proveedor público de búsqueda de dominios mediante Playwright.
-- Clasificar cada dominio como `available`, `taken`, `premium`, `manual_review`, `error` o `unknown`.
-- Exportar resultados a Excel y, más adelante, a JSON/CSV.
-- Continuar el lote aunque falle una consulta individual.
+- Agregar evidencia mínima de errores, captchas o bloqueos.
+- Evaluar un segundo proveedor si GoDaddy no resulta estable.
+- Exportar JSON/CSV más adelante.
 
 ## Qué No Hace
 
@@ -57,6 +57,7 @@ playwright install chromium
 ```bash
 python -m domainhunter check --file data/candidates.txt
 python -m domainhunter check --file data/candidates.txt --provider godaddy --output data/results.xlsx
+python -m domainhunter check --file data/candidates.txt --dry-run
 pytest
 ```
 
@@ -136,9 +137,9 @@ tests/
 
 ## Próximos Pasos
 
-1. Implementar exportador Excel real con Pandas/OpenPyXL.
-2. Implementar primer scraper Playwright con manejo de errores por dominio.
-3. Ejecutar una lista de prueba y documentar resultados.
+1. Agregar screenshots/logs ante captcha, bloqueo o error.
+2. Mover timeouts, delay y headless a configuración `.env`.
+3. Evaluar si GoDaddy es suficientemente estable o si conviene validar un proveedor alterno.
 
 ## Referencias Internas
 
