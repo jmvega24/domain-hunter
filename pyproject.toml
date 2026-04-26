@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "domainhunter"
+version = "0.1.0"
+description = "CLI para validar disponibilidad de dominios candidatos."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "typer>=0.12.0",
+  "playwright>=1.45.0",
+  "pandas>=2.2.0",
+  "openpyxl>=3.1.0",
+  "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0.0",
+]
+
+[project.scripts]
+domainhunter = "domainhunter.cli:app"
+
+[tool.setuptools.packages.find]
+include = ["domainhunter*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
