@@ -9,7 +9,8 @@ Bitácora breve de cambios relevantes. No registra fases cerradas sin evidencia 
 | 2026-04-26 | Cierre Fase 1 - Setup técnico | `fase cerrada` | Se ajusta README para separar capacidades actuales de MVP pendiente, se corrige la CLI Typer para exponer el subcomando `check` y se valida Fase 1 con `pytest`. |
 | 2026-04-26 | Fase 2 - MVP de validación | `fase cerrada` | Se implementa scraper GoDaddy inicial, exportador Excel y manejo de errores por dominio. GoDaddy mostró validación humana; los resultados quedaron en `manual_review`. |
 | 2026-04-26 | Fase 3 - Robustez operativa | `fase cerrada` | Se agrega configuración por `.env`, logs JSONL y screenshots ante `manual_review` o `error`. Se valida con 11 pruebas y corrida real contra GoDaddy. |
+| 2026-04-26 | Fase 4 - Multi-proveedor | `fase cerrada` | Se agrega Namecheap, `--provider all` y export Excel con hojas `results` y `summary`. Corrida real: 8 resultados y 4 filas consolidadas, todas `manual_review`. |
 
 ## Próximo Registro Esperado
 
-Iniciar Fase 4 con proveedor alterno y consolidación de resultados.
+Iniciar Fase 5 con scoring y shortlist sobre la hoja `summary`.

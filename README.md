@@ -6,16 +6,16 @@ Su propósito es acelerar el filtrado temprano de candidatos: leer una lista de 
 
 ## Estado Actual
 
-Estado del proyecto al 2026-04-26: Fase 3 cerrada.
+Estado del proyecto al 2026-04-26: Fase 4 cerrada.
 
-Ya existe paquete Python, CLI, modelos base, lector de candidatos, scraper GoDaddy inicial, servicio de consulta, exportador Excel, datos de ejemplo, pruebas básicas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
+Ya existe paquete Python, CLI, modelos base, lector de candidatos, scrapers iniciales para GoDaddy y Namecheap, servicio de consulta, exportador Excel con hoja de resultados y hoja consolidada, datos de ejemplo, pruebas básicas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
 
 ## Qué Hace Hoy
 
 - Lee candidatos desde un archivo de texto.
-- Consulta GoDaddy mediante Playwright.
+- Consulta GoDaddy y Namecheap mediante Playwright.
 - Normaliza la taxonomía base de estados de dominio en el modelo.
-- Exporta resultados a `data/results.xlsx`.
+- Exporta resultados a `data/results.xlsx` en dos hojas: `results` y `summary`.
 - Continúa el lote aunque falle o sea ambiguo un dominio.
 - Registra eventos en `logs/events.jsonl`.
 - Guarda screenshots en `logs/screenshots/` cuando hay página disponible.
@@ -23,7 +23,7 @@ Ya existe paquete Python, CLI, modelos base, lector de candidatos, scraper GoDad
 
 ## Qué Hará el MVP
 
-- Evaluar un segundo proveedor si GoDaddy no resulta estable.
+- Consolidar resultados por dominio cuando se consulta más de un proveedor.
 - Exportar JSON/CSV más adelante.
 
 ## Qué No Hace
@@ -58,6 +58,8 @@ playwright install chromium
 ```bash
 python -m domainhunter check --file data/candidates.txt
 python -m domainhunter check --file data/candidates.txt --provider godaddy --output data/results.xlsx
+python -m domainhunter check --file data/candidates.txt --provider namecheap --output data/results.xlsx
+python -m domainhunter check --file data/candidates.txt --provider all --output data/results.xlsx
 python -m domainhunter check --file data/candidates.txt --dry-run
 python -m domainhunter check --file data/candidates.txt --timeout-ms 10000 --delay-seconds 0 --evidence-dir logs
 pytest
@@ -151,9 +153,9 @@ tests/
 
 ## Próximos Pasos
 
-1. Evaluar proveedor alterno si GoDaddy sigue mostrando validación humana.
-2. Consolidar resultados multi-proveedor.
-3. Agregar export JSON/CSV si se vuelve necesario para iteraciones rápidas.
+1. Agregar scoring o priorización de candidatos sobre la hoja `summary`.
+2. Agregar export JSON/CSV si se vuelve necesario para iteraciones rápidas.
+3. Revisar manualmente los dominios que quedan en `manual_review`.
 
 ## Referencias Internas
 

@@ -9,7 +9,7 @@ Este archivo documenta proveedores, URLs, selectores y observaciones de scraping
 | Proveedor | Estado | Prioridad | Nota |
 |---|---|---:|---|
 | GoDaddy | `fase cerrada` para MVP básico | Alta | Se consultó con Playwright el 2026-04-26. Mostró captcha/bloqueo, por lo que la clasificación correcta fue `manual_review`. |
-| Namecheap | `backlog` | Media | Candidato alterno para contraste futuro. Selectores pendientes de validación. |
+| Namecheap | `fase cerrada` para MVP básico | Media | Se consultó con Playwright el 2026-04-26. No entregó evidencia suficiente en texto visible, por lo que la clasificación correcta fue `manual_review`. |
 
 ## GoDaddy
 
@@ -20,6 +20,15 @@ Este archivo documenta proveedores, URLs, selectores y observaciones de scraping
 - Evidencia generada: `logs/events.jsonl` y screenshots en `logs/screenshots/`.
 - No hay selectores específicos de disponibilidad validados todavía.
 - No se intentó evadir la validación humana.
+
+## Namecheap
+
+- URL usada: `https://www.namecheap.com/domains/registration/results/?domain={domain}`
+- Método actual: Playwright abre la página, lee texto visible de `body` y aplica señales conservadoras.
+- Resultado observado el 2026-04-26: no hubo evidencia textual suficiente para clasificar disponibilidad.
+- Estado asignado ante ese caso: `manual_review`.
+- Evidencia generada: `logs/events.jsonl` y screenshots en `logs/screenshots/`.
+- No hay selectores específicos de disponibilidad validados todavía.
 
 ## Reglas de Documentación de Selectores
 

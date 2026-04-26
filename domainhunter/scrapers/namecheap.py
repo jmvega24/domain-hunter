@@ -7,8 +7,8 @@ from domainhunter.models import Confidence, DomainCheckResult, DomainStatus
 from domainhunter.scrapers.base import BaseScraper
 
 
-class GoDaddyScraper(BaseScraper):
-    provider = "godaddy"
+class NamecheapScraper(BaseScraper):
+    provider = "namecheap"
 
     def __init__(
         self,
@@ -53,7 +53,7 @@ class GoDaddyScraper(BaseScraper):
         browser = None
         context = None
         page = None
-        url = f"https://www.godaddy.com/domainsearch/find?domainToCheck={quote_plus(domain)}"
+        url = f"https://www.namecheap.com/domains/registration/results/?domain={quote_plus(domain)}"
 
         try:
             async with async_playwright() as playwright:
@@ -69,7 +69,7 @@ class GoDaddyScraper(BaseScraper):
                     pass
                 body_text = await page.locator("body").inner_text(timeout=self.timeout_ms)
 
-                status, confidence, notes = classify_godaddy_text(body_text, domain)
+                status, confidence, notes = classify_namecheap_text(body_text, domain)
                 if status in {DomainStatus.MANUAL_REVIEW, DomainStatus.ERROR}:
                     screenshot_path = await self.evidence.screenshot(
                         page=page,
@@ -97,7 +97,7 @@ class GoDaddyScraper(BaseScraper):
                     notes=notes,
                 )
         except PlaywrightTimeoutError as exc:
-            notes = "Timeout consultando GoDaddy."
+            notes = "Timeout consultando Namecheap."
             screenshot_path = await self.evidence.screenshot(
                 page=page,
                 provider=self.provider,
@@ -124,7 +124,7 @@ class GoDaddyScraper(BaseScraper):
                 error_message=str(exc),
             )
         except Exception as exc:  # noqa: BLE001 - debe continuar el lote
-            notes = "Error tecnico consultando GoDaddy."
+            notes = "Error tecnico consultando Namecheap."
             screenshot_path = await self.evidence.screenshot(
                 page=page,
                 provider=self.provider,
@@ -168,15 +168,24 @@ class GoDaddyScraper(BaseScraper):
                     pass
 
 
-def classify_godaddy_text(text: str, domain: str) -> tuple[DomainStatus, Confidence, str]:
+def classify_namecheap_text(text: str, domain: str) -> tuple[DomainStatus, Confidence, str]:
     normalized = " ".join(text.lower().split())
     domain_l = domain.lower()
 
-    if any(marker in normalized for marker in ("captcha", "verify you are human", "access denied")):
+    if any(
+        marker in normalized
+        for marker in (
+            "captcha",
+            "verify you are human",
+            "access denied",
+            "security check",
+            "blocked",
+        )
+    ):
         return (
             DomainStatus.MANUAL_REVIEW,
             Confidence.LOW,
-            "GoDaddy mostro captcha, bloqueo o validacion humana.",
+            "Namecheap mostro captcha, bloqueo o validacion humana.",
         )
 
     if "premium" in normalized and domain_l in normalized:
@@ -191,7 +200,7 @@ def classify_godaddy_text(text: str, domain: str) -> tuple[DomainStatus, Confide
         f"{domain_l} está disponible",
         f"{domain_l} esta disponible",
         "domain is available",
-        "is available",
+        "add to cart",
     )
     if domain_l in normalized and any(marker in normalized for marker in available_markers):
         return (
@@ -201,12 +210,12 @@ def classify_godaddy_text(text: str, domain: str) -> tuple[DomainStatus, Confide
         )
 
     taken_markers = (
-        f"{domain_l} is taken",
         f"{domain_l} is unavailable",
+        f"{domain_l} is taken",
         f"{domain_l} no está disponible",
         f"{domain_l} no esta disponible",
         "already registered",
-        "is taken",
+        "domain is taken",
         "unavailable",
     )
     if domain_l in normalized and any(marker in normalized for marker in taken_markers):

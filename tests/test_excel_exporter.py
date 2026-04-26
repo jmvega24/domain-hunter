@@ -23,6 +23,7 @@ def test_export_results_to_excel_writes_expected_columns(tmp_path: Path) -> None
     workbook = load_workbook(output)
     sheet = workbook.active
 
+    assert workbook.sheetnames == ["results", "summary"]
     assert [cell.value for cell in sheet[1]] == [
         "domain",
         "provider",
@@ -36,3 +37,7 @@ def test_export_results_to_excel_writes_expected_columns(tmp_path: Path) -> None
     ]
     assert sheet["A2"].value == "clavora.com"
     assert sheet["C2"].value == "manual_review"
+
+    summary = workbook["summary"]
+    assert summary["A2"].value == "clavora.com"
+    assert summary["B2"].value == "manual_review"

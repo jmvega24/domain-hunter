@@ -4,9 +4,9 @@
 
 ## Estado Actual
 
-DomainHunter tiene Fase 3 cerrada: paquete Python, CLI, modelos, lector de candidatos, scraper GoDaddy inicial, servicio de consulta, exportador Excel, datos de ejemplo, pruebas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
+DomainHunter tiene Fase 4 cerrada: paquete Python, CLI, modelos, lector de candidatos, scrapers iniciales para GoDaddy y Namecheap, servicio de consulta, exportador Excel con hoja `results` y hoja `summary`, datos de ejemplo, pruebas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
 
-Estado narrativo actual: `fase cerrada` para Fase 3. La siguiente fase recomendada es multi-proveedor.
+Estado narrativo actual: `fase cerrada` para Fase 4. La siguiente fase recomendada es scoring y shortlist.
 
 ## Contexto de Negocio
 
@@ -77,12 +77,12 @@ Estados narrativos de fases:
 | Fase 1 | Setup técnico | `fase cerrada` | Crear estructura Python, dependencias, CLI base, carpetas y datos de ejemplo. |
 | Fase 2 | MVP de validación | `fase cerrada` | Leer candidatos, consultar proveedor inicial, clasificar y exportar Excel. |
 | Fase 3 | Robustez operativa | `fase cerrada` | Timeouts, screenshots, logs, rate limiting y manejo de captcha/bloqueo. |
-| Fase 4 | Multi-proveedor | `backlog` | Agregar proveedor alterno y consolidar resultados. |
+| Fase 4 | Multi-proveedor | `fase cerrada` | Agregar proveedor alterno y consolidar resultados. |
 | Fase 5 | Scoring y shortlist | `backlog` | Puntuar candidatos por disponibilidad, precio, extensión y notas. |
 
 ## Próxima Acción Recomendada
 
-Iniciar Fase 4: evaluar un proveedor alterno, idealmente Namecheap u otro flujo público más estable, y consolidar resultados por dominio.
+Iniciar Fase 5: agregar scoring o priorización de candidatos sobre la hoja `summary`.
 
 ## Notas Técnicas Vigentes
 
@@ -100,6 +100,9 @@ Iniciar Fase 4: evaluar un proveedor alterno, idealmente Namecheap u otro flujo 
 - Fase 3 genera `logs/events.jsonl` con proveedor, dominio, estado, mensaje, timestamp, screenshot y error si aplica.
 - Fase 3 guarda screenshots en `logs/screenshots/` cuando Playwright logra abrir una página.
 - `.env.example` documenta `DOMAINHUNTER_HEADLESS`, `DOMAINHUNTER_TIMEOUT_MS`, `DOMAINHUNTER_DELAY_SECONDS`, `DOMAINHUNTER_SCREENSHOTS_ON_ERROR` y `DOMAINHUNTER_EVIDENCE_DIR`.
+- `--provider all` ejecuta `godaddy` y `namecheap` en secuencia.
+- El Excel tiene hoja `results` con una fila por proveedor/dominio y hoja `summary` consolidada por dominio.
+- Corrida real del 2026-04-26: ambos proveedores terminaron en `manual_review`; GoDaddy mostró validación humana y Namecheap no entregó evidencia suficiente en el texto visible.
 
 ## Contradicciones Detectadas
 

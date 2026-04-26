@@ -5,7 +5,7 @@ from typing import Annotated, Any
 from domainhunter.config import DomainHunterSettings
 from domainhunter.exporters.excel_exporter import export_results_to_excel
 from domainhunter.io import read_candidate_domains
-from domainhunter.scrapers.factory import create_scraper
+from domainhunter.scrapers.factory import create_scraper, resolve_providers
 from domainhunter.services.domain_check_service import DomainCheckService
 
 try:
@@ -37,8 +37,9 @@ async def _run_check_async(
     resolved_evidence_dir = evidence_dir if evidence_dir is not None else settings.evidence_dir
 
     domains = read_candidate_domains(file)
+    providers = resolve_providers(provider)
 
-    print(f"Proveedor: {provider}")
+    print(f"Proveedor(es): {', '.join(providers)}")
     print(f"Entrada: {file}")
     print(f"Salida objetivo: {output}")
     print(f"Evidencia: {resolved_evidence_dir}")
@@ -51,15 +52,19 @@ async def _run_check_async(
         print("Modo dry-run: no se ejecuta scraping ni exportacion.")
         return 0
 
-    scraper = create_scraper(
-        provider=provider,
-        timeout_ms=resolved_timeout_ms,
-        headless=resolved_headless,
-        screenshots_on_error=resolved_screenshots_on_error,
-        evidence_dir=resolved_evidence_dir,
-    )
-    service = DomainCheckService(scraper=scraper, delay_seconds=resolved_delay_seconds)
-    results = await service.check_domains(domains)
+    results = []
+    for provider_name in providers:
+        print(f"Consultando proveedor: {provider_name}")
+        scraper = create_scraper(
+            provider=provider_name,
+            timeout_ms=resolved_timeout_ms,
+            headless=resolved_headless,
+            screenshots_on_error=resolved_screenshots_on_error,
+            evidence_dir=resolved_evidence_dir,
+        )
+        service = DomainCheckService(scraper=scraper, delay_seconds=resolved_delay_seconds)
+        results.extend(await service.check_domains(domains))
+
     export_results_to_excel(results, output)
 
     print(f"Resultados exportados: {output}")

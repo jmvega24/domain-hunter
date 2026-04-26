@@ -12,5 +12,16 @@ def test_check_command_runs_in_dry_run_mode(tmp_path: Path) -> None:
     result = CliRunner().invoke(app, ["check", "--file", str(candidates), "--dry-run"])
 
     assert result.exit_code == 0
+    assert "Proveedor(es): godaddy" in result.output
     assert "Dominios cargados: 2" in result.output
     assert "Modo dry-run" in result.output
+
+
+def test_check_command_accepts_all_providers_in_dry_run_mode(tmp_path: Path) -> None:
+    candidates = tmp_path / "candidates.txt"
+    candidates.write_text("clavora.com\n", encoding="utf-8")
+
+    result = CliRunner().invoke(app, ["check", "--file", str(candidates), "--provider", "all", "--dry-run"])
+
+    assert result.exit_code == 0
+    assert "Proveedor(es): godaddy, namecheap" in result.output
