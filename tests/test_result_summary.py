@@ -34,6 +34,8 @@ def test_summarize_results_consolidates_by_domain() -> None:
             "summary_confidence": "medium",
             "providers_checked": "godaddy,namecheap",
             "provider_statuses": "godaddy:manual_review; namecheap:available",
+            "score": 95,
+            "recommendation": "priorizar_revision",
             "notes": "godaddy: captcha | namecheap: available",
         }
     ]

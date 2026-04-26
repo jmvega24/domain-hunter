@@ -6,16 +6,17 @@ Su propósito es acelerar el filtrado temprano de candidatos: leer una lista de 
 
 ## Estado Actual
 
-Estado del proyecto al 2026-04-26: Fase 4 cerrada.
+Estado del proyecto al 2026-04-26: Fase 5 cerrada.
 
-Ya existe paquete Python, CLI, modelos base, lector de candidatos, scrapers iniciales para GoDaddy y Namecheap, servicio de consulta, exportador Excel con hoja de resultados y hoja consolidada, datos de ejemplo, pruebas básicas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
+Ya existe paquete Python, CLI, modelos base, lector de candidatos, scrapers iniciales para GoDaddy y Namecheap, servicio de consulta, exportador Excel con hojas de resultados, resumen y shortlist, datos de ejemplo, pruebas básicas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
 
 ## Qué Hace Hoy
 
 - Lee candidatos desde un archivo de texto.
 - Consulta GoDaddy y Namecheap mediante Playwright.
 - Normaliza la taxonomía base de estados de dominio en el modelo.
-- Exporta resultados a `data/results.xlsx` en dos hojas: `results` y `summary`.
+- Exporta resultados a `data/results.xlsx` en tres hojas: `results`, `summary` y `shortlist`.
+- Calcula score y recomendación por dominio consolidado.
 - Continúa el lote aunque falle o sea ambiguo un dominio.
 - Registra eventos en `logs/events.jsonl`.
 - Guarda screenshots en `logs/screenshots/` cuando hay página disponible.
@@ -23,7 +24,6 @@ Ya existe paquete Python, CLI, modelos base, lector de candidatos, scrapers inic
 
 ## Qué Hará el MVP
 
-- Consolidar resultados por dominio cuando se consulta más de un proveedor.
 - Exportar JSON/CSV más adelante.
 
 ## Qué No Hace
@@ -110,6 +110,8 @@ Columnas mínimas:
 | `notes` | Observaciones relevantes. |
 | `error_message` | Error técnico, si aplica. |
 
+La hoja `summary` agrega `score` y `recommendation`. La hoja `shortlist` filtra candidatos con score suficiente para revisión.
+
 ## Estructura Esperada
 
 ```txt
@@ -153,9 +155,9 @@ tests/
 
 ## Próximos Pasos
 
-1. Agregar scoring o priorización de candidatos sobre la hoja `summary`.
-2. Agregar export JSON/CSV si se vuelve necesario para iteraciones rápidas.
-3. Revisar manualmente los dominios que quedan en `manual_review`.
+1. Revisar manualmente los dominios que quedan en `manual_review`.
+2. Mejorar selectores específicos si se decide insistir con GoDaddy o Namecheap.
+3. Agregar export JSON/CSV si se vuelve necesario para iteraciones rápidas.
 
 ## Referencias Internas
 

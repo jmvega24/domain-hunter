@@ -4,9 +4,9 @@
 
 ## Estado Actual
 
-DomainHunter tiene Fase 4 cerrada: paquete Python, CLI, modelos, lector de candidatos, scrapers iniciales para GoDaddy y Namecheap, servicio de consulta, exportador Excel con hoja `results` y hoja `summary`, datos de ejemplo, pruebas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
+DomainHunter tiene Fase 5 cerrada: paquete Python, CLI, modelos, lector de candidatos, scrapers iniciales para GoDaddy y Namecheap, servicio de consulta, exportador Excel con hojas `results`, `summary` y `shortlist`, datos de ejemplo, pruebas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
 
-Estado narrativo actual: `fase cerrada` para Fase 4. La siguiente fase recomendada es scoring y shortlist.
+Estado narrativo actual: `fase cerrada` para Fase 5. La siguiente acción recomendada es revisión manual de candidatos o una fase nueva de export JSON/CSV.
 
 ## Contexto de Negocio
 
@@ -78,11 +78,11 @@ Estados narrativos de fases:
 | Fase 2 | MVP de validación | `fase cerrada` | Leer candidatos, consultar proveedor inicial, clasificar y exportar Excel. |
 | Fase 3 | Robustez operativa | `fase cerrada` | Timeouts, screenshots, logs, rate limiting y manejo de captcha/bloqueo. |
 | Fase 4 | Multi-proveedor | `fase cerrada` | Agregar proveedor alterno y consolidar resultados. |
-| Fase 5 | Scoring y shortlist | `backlog` | Puntuar candidatos por disponibilidad, precio, extensión y notas. |
+| Fase 5 | Scoring y shortlist | `fase cerrada` | Puntuar candidatos por disponibilidad, precio, extensión y notas. |
 
 ## Próxima Acción Recomendada
 
-Iniciar Fase 5: agregar scoring o priorización de candidatos sobre la hoja `summary`.
+Revisar manualmente la hoja `shortlist` y los screenshots asociados. Si se necesita seguir automatizando, abrir una fase nueva para export JSON/CSV o selectores específicos por proveedor.
 
 ## Notas Técnicas Vigentes
 
@@ -103,6 +103,8 @@ Iniciar Fase 5: agregar scoring o priorización de candidatos sobre la hoja `sum
 - `--provider all` ejecuta `godaddy` y `namecheap` en secuencia.
 - El Excel tiene hoja `results` con una fila por proveedor/dominio y hoja `summary` consolidada por dominio.
 - Corrida real del 2026-04-26: ambos proveedores terminaron en `manual_review`; GoDaddy mostró validación humana y Namecheap no entregó evidencia suficiente en el texto visible.
+- Fase 5 agrega `score` y `recommendation` a `summary`, además de una hoja `shortlist`.
+- Corrida real del 2026-04-26: los 4 dominios quedaron con score `40` y recomendación `revision_manual`.
 
 ## Contradicciones Detectadas
 

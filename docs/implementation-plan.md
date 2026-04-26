@@ -19,7 +19,7 @@
 | Fase 2 | MVP de validación | `fase cerrada` | Leer `data/candidates.txt`, consultar proveedor inicial, normalizar estados y exportar Excel. | Lista de prueba ejecutada; `data/results.xlsx` generado; errores por dominio no detienen el lote. |
 | Fase 3 | Robustez operativa | `fase cerrada` | Agregar timeouts configurables, rate limiting, logs y evidencia mínima ante errores. | Casos de error, captcha/bloqueo y HTML ambiguo terminan en `manual_review` o `error` sin romper el lote. |
 | Fase 4 | Multi-proveedor | `fase cerrada` | Agregar proveedor alterno y consolidar resultados por dominio. | La CLI permite elegir proveedor; resultados indican fuente y confianza. |
-| Fase 5 | Scoring y shortlist | `backlog` | Ordenar candidatos por disponibilidad, precio, confianza y notas. | Export incluye score revisable y shortlist separada o filtrable. |
+| Fase 5 | Scoring y shortlist | `fase cerrada` | Ordenar candidatos por disponibilidad, precio, confianza y notas. | Export incluye score revisable y shortlist separada o filtrable. |
 
 ## Alcance Detallado por Fase
 
@@ -92,6 +92,20 @@ Validación actual:
 - `PYTHONPATH=/tmp/domainhunter-deps python3 -m domainhunter check --file data/candidates.txt --provider all --output data/results.xlsx --timeout-ms 15000 --delay-seconds 0 --evidence-dir logs --screenshots-on-error`: correcto.
 - Resultado real del proveedor en 2026-04-26: GoDaddy y Namecheap devolvieron `manual_review`; el Excel contiene 8 filas en `results` y 4 filas en `summary`.
 
+### Fase 5 - Scoring y shortlist
+
+- Agregar score por dominio consolidado.
+- Agregar recomendación textual por dominio.
+- Exportar hoja `shortlist` filtrada y ordenada por score.
+- Mantener `manual_review` cuando los proveedores no entregan evidencia suficiente.
+
+Validación actual:
+
+- `PYTHONPATH=/tmp/domainhunter-deps python3 -m pytest`: correcto, 20 pruebas pasan.
+- `PYTHONPATH=/tmp/domainhunter-deps python3 -m domainhunter check --file data/candidates.txt --provider all --dry-run`: correcto.
+- `PYTHONPATH=/tmp/domainhunter-deps python3 -m domainhunter check --file data/candidates.txt --provider all --output data/results.xlsx --timeout-ms 15000 --delay-seconds 0 --evidence-dir logs --screenshots-on-error`: correcto.
+- Resultado real del proveedor en 2026-04-26: el Excel contiene hojas `results`, `summary` y `shortlist`; los 4 dominios quedaron con score `40` y recomendación `revision_manual`.
+
 ## Dependencias y Riesgos
 
 - Playwright requiere instalación de navegador local.
@@ -102,3 +116,4 @@ Validación actual:
 - Fase 2 queda cerrada como MVP básico, pero la disponibilidad real de dominios no fue confirmada porque GoDaddy presentó validación humana.
 - Fase 3 queda cerrada para robustez mínima; el riesgo activo es que GoDaddy no permita confirmar disponibilidad desde automatización.
 - Fase 4 queda cerrada para multi-proveedor; el riesgo activo es que ambos proveedores requieran revisión manual para estos candidatos.
+- Fase 5 queda cerrada; el score es operativo y no reemplaza revisión marcaria ni confirmación manual de disponibilidad.

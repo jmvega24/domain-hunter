@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from domainhunter.models import Confidence, DomainCheckResult, DomainStatus
+from domainhunter.services.scoring import score_summary_records
 
 
 STATUS_PRIORITY = {
@@ -19,7 +20,7 @@ CONFIDENCE_PRIORITY = {
 }
 
 
-def summarize_results(results: list[DomainCheckResult]) -> list[dict[str, str]]:
+def summarize_results(results: list[DomainCheckResult]) -> list[dict[str, str | int]]:
     grouped: dict[str, list[DomainCheckResult]] = defaultdict(list)
     for result in results:
         grouped[result.domain].append(result)
@@ -50,4 +51,4 @@ def summarize_results(results: list[DomainCheckResult]) -> list[dict[str, str]]:
             }
         )
 
-    return sorted(summary, key=lambda record: record["domain"])
+    return score_summary_records(summary)
