@@ -1,34 +1,35 @@
 # Roadmap - DomainHunter
 
-Última actualización: 2026-04-25
+Última actualización: 2026-04-28
 
 ## Visión del Producto
 
-DomainHunter debe convertirse en una CLI pequeña y confiable para reducir listas de dominios candidatos a una shortlist revisable. Su valor está en acelerar exploración de marca, no en reemplazar compra, verificación legal ni confirmación manual final.
+DomainHunter debe ser una CLI pequeña y confiable para reducir listas de dominios candidatos a una shortlist revisable. Su valor está en acelerar exploración de marca, no en reemplazar compra, verificación legal ni confirmación manual final.
 
-## Hitos Principales
+## Capacidades Actuales
 
-| Hito | Resultado esperado |
-|---|---|
-| Documentación base | Otro agente puede entender propósito, estado y siguiente paso sin reconstruir contexto. |
-| Setup técnico | Proyecto Python instalable con CLI mínima y pruebas básicas. |
-| MVP de consulta | Lista de candidatos procesada contra un proveedor inicial y exportada a Excel. |
-| Robustez | Manejo controlado de errores, captcha, bloqueos, timeouts y evidencia de fallos. |
-| Multi-proveedor | Comparación o confirmación básica usando más de una fuente. |
-| Shortlist | Export más útil para decidir qué dominios revisar manualmente. |
+| Capacidad | Estado | Resultado |
+|---|---|---|
+| Documentación base | `fase cerrada` operativamente | Otro agente puede entender propósito, estado y siguiente paso sin reconstruir contexto. |
+| Setup técnico | `fase cerrada` | Proyecto Python instalable con CLI, modelos, estructura y pruebas básicas. |
+| MVP de consulta | `fase cerrada` | Lista de candidatos procesada contra proveedor inicial y exportada a Excel. |
+| Robustez operativa | `fase cerrada` | Manejo controlado de errores, captcha, bloqueos, timeouts, logs y screenshots. |
+| Multi-proveedor | `fase cerrada` | GoDaddy y Namecheap disponibles con resultados por proveedor y resumen consolidado. |
+| Scoring y shortlist | `fase cerrada` | Score, recomendación y shortlist revisable por dominio. |
+| Export estructurado | `fase cerrada` | JSON y CSV opcionales con `results`, `summary` y `shortlist`. |
+| Reporte Markdown | `fase cerrada` | Reporte de revisión con shortlist, resumen, resultados por proveedor y evidencia. |
 
-## Orden Recomendado de Ejecución
+## Fase Actual
 
-1. Cerrar setup técnico.
-2. Implementar modelos y taxonomía de estados.
-3. Implementar lectura de candidatos.
-4. Implementar exportador Excel.
-5. Validar un proveedor inicial con Playwright.
-6. Integrar scraper al servicio de chequeo.
-7. Ejecutar lista corta de prueba.
-8. Documentar selectores y resultados observados.
-9. Añadir tolerancia a errores y evidencia mínima.
-10. Evaluar segundo proveedor.
+### Fase 8 - Hardening de calidad y revisión
+
+Objetivo: mejorar confiabilidad y utilidad del MVP existente sin ampliar superficie de scraping.
+
+Líneas de trabajo:
+
+1. Alinear documentación con capacidades reales.
+2. Ampliar pruebas de clasificadores para evitar falsos positivos.
+3. Mejorar el reporte Markdown como guía de revisión manual.
 
 ## Futuro Fuera del MVP
 
@@ -40,3 +41,4 @@ DomainHunter debe convertirse en una CLI pequeña y confiable para reducir lista
 - Generación automática de nombres de marca.
 - Scraping intensivo o distribuido.
 - Automatización para evadir mecanismos anti-bot.
+- Nuevos proveedores sin validación explícita de selectores y comportamiento.

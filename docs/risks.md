@@ -1,6 +1,6 @@
 # Riesgos - DomainHunter
 
-Última actualización: 2026-04-26
+Última actualización: 2026-04-28
 
 ## Riesgos Principales
 
@@ -17,7 +17,9 @@
 | Score interpretado como certeza | Se podrían priorizar dominios sin disponibilidad confirmada. | Mantener `manual_review`, mostrar recomendación explícita y exigir revisión manual. |
 | Salidas generadas se confunden con fuente canónica | JSON/CSV/Excel pueden quedar obsoletos después de cambiar candidatos. | Regenerar salidas desde `data/candidates.txt` y mantener artefactos fuera de Git. |
 | Reporte Markdown se trata como dictamen final | Se podría olvidar que es solo una ayuda operativa. | Incluir aviso en el reporte y mantener estados `manual_review` cuando no hay evidencia suficiente. |
+| Drift documental entre fases | Agentes futuros podrían reabrir trabajo cerrado o ignorar capacidades existentes. | Mantener README, CONTEXT, roadmap, plan y slice log alineados al abrir/cerrar fases. |
+| Falsos positivos en clasificadores | Un dominio podría marcarse disponible con evidencia débil o de otro dominio. | Ampliar pruebas de clasificadores y conservar fallback `manual_review` ante ambigüedad. |
 
 ## Riesgo Operativo Actual
 
-El MVP multi-proveedor existe, exporta Excel/JSON/CSV/Markdown, registra evidencia y genera shortlist. GoDaddy presentó validación humana y Namecheap no entregó evidencia suficiente en la prueba real, así que la decisión final sigue siendo revisión manual.
+El MVP multi-proveedor existe, exporta Excel/JSON/CSV/Markdown, registra evidencia y genera shortlist. GoDaddy presentó validación humana y Namecheap no entregó evidencia suficiente en la prueba real, así que la decisión final sigue siendo revisión manual. Fase 8 se enfoca en hardening de documentación, clasificadores y reporte sin intentar evadir bloqueos.

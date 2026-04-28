@@ -77,6 +77,13 @@ def _render_markdown_report(payload: dict[str, list[dict[str, Any]]]) -> str:
         "",
         "Este reporte ayuda a revisar candidatos; no confirma disponibilidad legal ni registral.",
         "",
+        "## Guia de revision manual",
+        "",
+        "- Verificar manualmente cada dominio marcado como `revision_manual` antes de tomar decisiones de marca o compra.",
+        "- Revisar las evidencias enlazadas en `notes`, especialmente screenshots de captcha, bloqueo o resultados ambiguos.",
+        "- Confirmar disponibilidad directamente en el registrador antes de priorizar un candidato.",
+        "- Tratar el score como ayuda operativa, no como certeza legal, marcaria ni registral.",
+        "",
         "## Shortlist",
         "",
     ]

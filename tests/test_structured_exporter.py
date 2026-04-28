@@ -67,6 +67,9 @@ def test_export_results_to_markdown_writes_review_report(tmp_path: Path) -> None
 
     report = output.read_text(encoding="utf-8")
     assert "# DomainHunter Report" in report
+    assert "## Guia de revision manual" in report
+    assert "revision_manual" in report
+    assert "no confirma disponibilidad legal ni registral" in report
     assert "## Shortlist" in report
     assert "## Summary" in report
     assert "## Provider Results" in report

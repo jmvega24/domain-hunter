@@ -1,12 +1,12 @@
 # CONTEXT.md - DomainHunter
 
-Última actualización: 2026-04-26
+Última actualización: 2026-04-28
 
 ## Estado Actual
 
 DomainHunter tiene Fase 7 cerrada: paquete Python, CLI, modelos, lector de candidatos, scrapers iniciales para GoDaddy y Namecheap, servicio de consulta, exportadores Excel/JSON/CSV/Markdown, datos de ejemplo, pruebas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
 
-Estado narrativo actual: `fase cerrada` para Fase 7. La siguiente acción recomendada es revisión manual de candidatos o mejora de selectores por proveedor.
+Estado narrativo actual: Fase 7 en `fase cerrada`; Fase 8 en `implementacion en curso` para hardening de calidad y revisión. La siguiente acción recomendada es mejorar documentación, pruebas de clasificadores y utilidad del reporte Markdown antes de abrir scraping más ambicioso.
 
 ## Contexto de Negocio
 
@@ -81,6 +81,7 @@ Estados narrativos de fases:
 | Fase 5 | Scoring y shortlist | `fase cerrada` | Puntuar candidatos por disponibilidad, precio, extensión y notas. |
 | Fase 6 | Export estructurado | `fase cerrada` | Exportar JSON y CSV opcionales para iteraciones rápidas. |
 | Fase 7 | Reporte de revisión | `fase cerrada` | Exportar reporte Markdown para revisión manual. |
+| Fase 8 | Hardening de calidad y revisión | `implementacion en curso` | Alinear documentación, fortalecer pruebas de clasificación y mejorar reporte Markdown como guía de revisión manual. |
 
 ## Próxima Acción Recomendada
 
@@ -111,6 +112,7 @@ Revisar manualmente la hoja `shortlist` y los screenshots asociados. Si se neces
 - Corrida real del 2026-04-26: `data/results.json` contiene 8 resultados, 4 summary y 4 shortlist; `data/csv/` contiene `results.csv`, `summary.csv` y `shortlist.csv`.
 - Fase 7 agrega `--report-output`.
 - Corrida real del 2026-04-26: `data/report.md` contiene secciones `Shortlist`, `Summary` y `Provider Results`, con 4 dominios en `revision_manual`.
+- Fase 8 no debe intentar evadir bloqueos ni declarar disponibilidad definitiva; debe mejorar confianza, mantenibilidad y revisión humana sobre el MVP existente.
 
 ## Contradicciones Detectadas
 

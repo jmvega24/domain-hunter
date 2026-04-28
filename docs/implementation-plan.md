@@ -1,6 +1,6 @@
 # Plan de Implementación - DomainHunter
 
-Última actualización: 2026-04-26
+Última actualización: 2026-04-28
 
 ## Estados Permitidos
 
@@ -22,6 +22,7 @@
 | Fase 5 | Scoring y shortlist | `fase cerrada` | Ordenar candidatos por disponibilidad, precio, confianza y notas. | Export incluye score revisable y shortlist separada o filtrable. |
 | Fase 6 | Export estructurado | `fase cerrada` | Exportar JSON y CSV opcionales para iteraciones rápidas. | JSON y CSV contienen `results`, `summary` y `shortlist` equivalentes al Excel. |
 | Fase 7 | Reporte de revisión | `fase cerrada` | Exportar reporte Markdown para revisión manual. | Reporte contiene shortlist, resumen, resultados por proveedor y referencias a evidencia. |
+| Fase 8 | Hardening de calidad y revisión | `implementacion en curso` | Alinear documentación, ampliar pruebas de clasificadores y mejorar el reporte Markdown para revisión manual. | Documentación coherente, clasificadores cubiertos con casos conservadores y reporte más accionable sin cambiar la política de no confirmación definitiva. |
 
 ## Alcance Detallado por Fase
 
@@ -136,6 +137,20 @@ Validación actual:
 - `PYTHONPATH=/tmp/domainhunter-deps python3 -m domainhunter check --file data/candidates.txt --provider all --output data/results.xlsx --json-output data/results.json --csv-dir data/csv --report-output data/report.md --timeout-ms 15000 --delay-seconds 0 --evidence-dir logs --screenshots-on-error`: correcto.
 - Resultado real del proveedor en 2026-04-26: `data/report.md` generado con 4 dominios en `revision_manual`.
 
+### Fase 8 - Hardening de calidad y revisión
+
+- Alinear README, contexto, roadmap y bitácora con el estado real del proyecto.
+- Ampliar pruebas de clasificadores para `available`, `taken`, `premium`, captcha/bloqueo, ambigüedad y falsos positivos por dominio distinto.
+- Mejorar el reporte Markdown para guiar revisión manual sin presentar conclusiones definitivas.
+- Mantener fuera de alcance scraping agresivo, evasión anti-bot, compra automática y validación legal/marcaria.
+
+Validación objetivo:
+
+- `python -m compileall domainhunter tests`: correcto.
+- `python -m pytest`: correcto en entorno con dependencias instaladas.
+- `python -m domainhunter check --file data/candidates.txt --dry-run`: correcto.
+- Reporte Markdown conserva `Shortlist`, `Summary` y `Provider Results`, y agrega guía de revisión manual.
+
 ## Dependencias y Riesgos
 
 - Playwright requiere instalación de navegador local.
@@ -149,3 +164,4 @@ Validación actual:
 - Fase 5 queda cerrada; el score es operativo y no reemplaza revisión marcaria ni confirmación manual de disponibilidad.
 - Fase 6 queda cerrada; los archivos estructurados generados están fuera de Git.
 - Fase 7 queda cerrada; el reporte Markdown es un artefacto de revisión y también queda fuera de Git.
+- Fase 8 queda abierta para hardening; no debe abrir nuevos proveedores ni selectores no validados dentro de esta misma fase.
