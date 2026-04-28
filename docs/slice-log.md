@@ -13,7 +13,8 @@ Bitácora breve de cambios relevantes. No registra fases cerradas sin evidencia 
 | 2026-04-26 | Fase 5 - Scoring y shortlist | `fase cerrada` | Se agrega score, recomendación y hoja `shortlist`. Corrida real: 4 dominios con score 40 y recomendación `revision_manual`. |
 | 2026-04-26 | Fase 6 - Export estructurado | `fase cerrada` | Se agrega `--json-output` y `--csv-dir`. Corrida real: JSON con 8/4/4 registros y CSV separados para results, summary y shortlist. |
 | 2026-04-26 | Fase 7 - Reporte de revisión | `fase cerrada` | Se agrega `--report-output`. Corrida real: Markdown con shortlist, summary y resultados por proveedor; 4 dominios en `revision_manual`. |
+| 2026-04-28 | Apertura Fase 8 - Hardening de calidad y revisión | `implementacion en curso` | Se abre fase para alinear documentación, ampliar cobertura de clasificadores y mejorar el reporte Markdown como guía de revisión manual. |
 
 ## Próximo Registro Esperado
 
-Revisar manualmente el reporte o abrir fase nueva para mejorar selectores por proveedor.
+Cerrar Fase 8 con evidencia de documentación alineada, pruebas ampliadas y reporte Markdown mejorado.

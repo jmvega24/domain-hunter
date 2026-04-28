@@ -6,7 +6,7 @@ Su propósito es acelerar el filtrado temprano de candidatos: leer una lista de 
 
 ## Estado Actual
 
-Estado del proyecto al 2026-04-26: Fase 7 cerrada.
+Estado del proyecto al 2026-04-28: Fase 7 cerrada y Fase 8 abierta como hardening de calidad y revisión.
 
 Ya existe paquete Python, CLI, modelos base, lector de candidatos, scrapers iniciales para GoDaddy y Namecheap, servicio de consulta, exportadores Excel/JSON/CSV/Markdown, datos de ejemplo, pruebas básicas, configuración por `.env` y evidencia mínima ante captcha, bloqueo o error.
 
@@ -24,9 +24,14 @@ Ya existe paquete Python, CLI, modelos base, lector de candidatos, scrapers inic
 - Guarda screenshots en `logs/screenshots/` cuando hay página disponible.
 - Ejecuta pruebas básicas de setup, configuración, lectura, exportación, evidencia y clasificación.
 
-## Qué Hará el MVP
+## Fase 8 - Hardening de calidad y revisión
 
-- Exportar JSON/CSV más adelante.
+La siguiente fase no agrega scraping agresivo ni nuevas superficies grandes. Su objetivo es mejorar lo que ya existe:
+
+- alinear documentación y roadmap con las capacidades reales;
+- ampliar pruebas de clasificación para reducir falsos positivos;
+- mejorar el reporte Markdown como artefacto de revisión manual;
+- mantener la política conservadora de usar `manual_review` cuando la evidencia no sea suficiente.
 
 ## Qué No Hace
 
@@ -159,9 +164,10 @@ tests/
 
 ## Próximos Pasos
 
-1. Revisar manualmente los dominios que quedan en `manual_review`.
-2. Mejorar selectores específicos si se decide insistir con GoDaddy o Namecheap.
-3. Agregar nuevos candidatos en `data/candidates.txt` y regenerar salidas.
+1. Ejecutar Fase 8 para alinear documentación, fortalecer clasificadores y mejorar el reporte de revisión.
+2. Revisar manualmente los dominios que quedan en `manual_review`.
+3. Mejorar selectores específicos si se decide insistir con GoDaddy o Namecheap, solo con validación en ejecución y sin evadir mecanismos anti-bot.
+4. Agregar nuevos candidatos en `data/candidates.txt` y regenerar salidas.
 
 ## Referencias Internas
 
